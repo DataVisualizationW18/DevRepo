@@ -6,3 +6,11 @@
 #nav-panel {
   background-color: lightgrey;
 }
+
+[type='checkbox'] {
+  margin: 0;
+}
+
+select {
+  margin: 0;
+}
