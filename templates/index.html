@@ -10,102 +10,104 @@
   </head>
   <body>
     <div id="full-page" class="grid-x grid-margin-x">
-      <div id="nav-panel" class="cell medium-3 large-2">
-        <form>
-          <div id="domain">
-            <label>Choose Domain:
-              <select>
-                <option value="" disabled selected>Choose Domain</option>
-                <option value="cryptography">cryptography</option>
-                <option value="databases">databases</option>
-                <option value="json">json</option>
-                <option value="logging">logging</option>
-                <option value="mocking">mocking</option>
-                <option value="object-relational mapping">object-relational mapping</option>
-                <option value="security">security</option>
-                <option value="testing">testing</option>
-                <option value="utilities">utilities</option>
-                <option value="xml">xml</option>
-              </select>
-            </label>
+      <div id="nav-panel-parent" class="cell medium-3 large-2">
+        <div id="nav-panel" class="grid-y">
+          <div id="form-section" class="cell medium-3 large-2">
+            <form>
+              <div id="domain">
+                <label>Choose Domain:
+                  <select>
+                    <option value="" disabled selected>Choose Domain</option>
+                    <option value="cryptography">cryptography</option>
+                    <option value="databases">databases</option>
+                    <option value="json">json</option>
+                    <option value="logging">logging</option>
+                    <option value="mocking">mocking</option>
+                    <option value="object-relational mapping">object-relational mapping</option>
+                    <option value="security">security</option>
+                    <option value="testing">testing</option>
+                    <option value="utilities">utilities</option>
+                    <option value="xml">xml</option>
+                  </select>
+                </label>
+              </div>
+              <div id="libraries">
+                <label>Choose Libraries:</label>
+                <div>
+                  <input id="checkbox1" type="checkbox"><label for="checkbox1">Checkbox 1</label>
+                </div>
+                <div>
+                  <input id="checkbox2" type="checkbox"><label for="checkbox2">Checkbox 2</label>
+                </div>
+                <div>
+                  <input id="checkbox3" type="checkbox"><label for="checkbox3">Checkbox 3</label>
+                </div>
+              </div>
+              <div id="metrics">
+                <label>Select Metrics:</label>
+                <select>
+                  <option value="" disabled selected>Select Metric</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+                <select>
+                  <option value="" disabled selected>Select Metric</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+                <select>
+                  <option value="" disabled selected>Select Metric</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+                <select>
+                  <option value="" disabled selected>Select Metric</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+              </div>
+              <div class="button-group">
+                <a class="button">Small</a>
+                <a class="button">Button</a>
+              </div>
+            </form>
           </div>
-          <div id="libraries">
-            <label>Choose Libraries:</label>
-            <div>
-              <input id="checkbox1" type="checkbox"><label for="checkbox1">Checkbox 1</label>
-            </div>
-            <div>
-              <input id="checkbox2" type="checkbox"><label for="checkbox2">Checkbox 2</label>
-            </div>
-            <div>
-              <input id="checkbox3" type="checkbox"><label for="checkbox3">Checkbox 3</label>
-            </div>
+          <div id="history-section" class="cell">
+            HISTORY
+            <button type="button" class="button" id="show-more">See More</button>
           </div>
-          <div id="metrics">
-            <label>Select Metrics:</label>
-            <select>
-              <option value="" disabled selected>Select Metric</option>
-              <option value="backwards-compatibility">Backwards Compatibility</option>
-              <option value="issue-closing-time">Issue Closing Time</option>
-              <option value="issue-response-time">Issue Response Time</option>
-              <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
-              <option value="last-modification-date">Last Modification Date</option>
-              <option value="performance">Performance</option>
-              <option value="popularity">Popularity</option>
-              <option value="release-frequency">Release Frequency</option>
-              <option value="security">Security</option>
-            </select>
-            <select>
-              <option value="" disabled selected>Select Metric</option>
-              <option value="backwards-compatibility">Backwards Compatibility</option>
-              <option value="issue-closing-time">Issue Closing Time</option>
-              <option value="issue-response-time">Issue Response Time</option>
-              <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
-              <option value="last-modification-date">Last Modification Date</option>
-              <option value="performance">Performance</option>
-              <option value="popularity">Popularity</option>
-              <option value="release-frequency">Release Frequency</option>
-              <option value="security">Security</option>
-            </select>
-            <select>
-              <option value="" disabled selected>Select Metric</option>
-              <option value="backwards-compatibility">Backwards Compatibility</option>
-              <option value="issue-closing-time">Issue Closing Time</option>
-              <option value="issue-response-time">Issue Response Time</option>
-              <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
-              <option value="last-modification-date">Last Modification Date</option>
-              <option value="performance">Performance</option>
-              <option value="popularity">Popularity</option>
-              <option value="release-frequency">Release Frequency</option>
-              <option value="security">Security</option>
-            </select>
-            <select>
-              <option value="" disabled selected>Select Metric</option>
-              <option value="backwards-compatibility">Backwards Compatibility</option>
-              <option value="issue-closing-time">Issue Closing Time</option>
-              <option value="issue-response-time">Issue Response Time</option>
-              <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
-              <option value="last-modification-date">Last Modification Date</option>
-              <option value="performance">Performance</option>
-              <option value="popularity">Popularity</option>
-              <option value="release-frequency">Release Frequency</option>
-              <option value="security">Security</option>
-            </select>
-          </div>
-          <div class="button-group">
-            <a class="button">Small</a>
-            <a class="button">Button</a>
-          </div>
-        </form>
+        </div>
       </div>
       <div class="cell auto">VIZ SCREEN</div>
     </div>
-<!--
-    {% if name %}
-      <h1>Hello {{ name }}!</h1>
-    {% else %}
-      <h1>Hello, World!</h1>
-    {% endif %} -->
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
@@ -113,6 +115,17 @@
 
     <script>
       $(document).foundation();
+
+      $("#show-more").click(function() {
+        if (!$("#history-section").hasClass("expanded")){
+           $("#history-section").animate({height: '100%',},"slow");
+           $("#history-section").addClass("expanded");
+        }
+        else {
+           $("#history-section").animate({height: '150px',},"slow");
+           $("#history-section").removeClass("expanded");
+        }
+      });
     </script>
   </body>
 </html>

@@ -3,8 +3,27 @@
   width: 100vw;
 }
 
-#nav-panel {
+#nav-panel-parent {
   background-color: lightgrey;
+}
+
+#nav-panel {
+  position: relative;
+  height: 100%;
+}
+
+#form-section {
+  background-color: orange;
+  height: calc(100% - 150px);
+  overflow: auto;
+}
+
+#history-section {
+  bottom: 0;
+  position: absolute;
+  background-color: aqua;
+  width: 100%;
+  height: 150px;
 }
 
 [type='checkbox'] {
