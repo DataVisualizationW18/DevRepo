@@ -18,35 +18,20 @@
                 <label>Choose Domain:
                   <select>
                     <option value="" disabled selected>Choose Domain</option>
-                    <option value="cryptography">cryptography</option>
-                    <option value="databases">databases</option>
-                    <option value="json">json</option>
-                    <option value="logging">logging</option>
-                    <option value="mocking">mocking</option>
-                    <option value="object-relational mapping">object-relational mapping</option>
-                    <option value="security">security</option>
-                    <option value="testing">testing</option>
-                    <option value="utilities">utilities</option>
-                    <option value="xml">xml</option>
+                    {% for o in domain_list %}
+                      {% if o %}
+                        <option value="{{ o }}">{{ o }}</option>
+                      {% endif %}
+                    {% endfor %}
                   </select>
                 </label>
               </div>
               <div id="libraries">
-                <label>Choose Libraries:</label>
-                <div>
-                  <input id="checkbox1" type="checkbox"><label for="checkbox1">Checkbox 1</label>
-                </div>
-                <div>
-                  <input id="checkbox2" type="checkbox"><label for="checkbox2">Checkbox 2</label>
-                </div>
-                <div>
-                  <input id="checkbox3" type="checkbox"><label for="checkbox3">Checkbox 3</label>
-                </div>
               </div>
               <div id="metrics">
                 <label>Select Metrics:</label>
                 <select>
-                  <option value="" disabled selected>Select Metric</option>
+                  <option value="" selected>None</option>
                   <option value="backwards-compatibility">Backwards Compatibility</option>
                   <option value="issue-closing-time">Issue Closing Time</option>
                   <option value="issue-response-time">Issue Response Time</option>
@@ -58,7 +43,7 @@
                   <option value="security">Security</option>
                 </select>
                 <select>
-                  <option value="" disabled selected>Select Metric</option>
+                  <option value="" selected>None</option>
                   <option value="backwards-compatibility">Backwards Compatibility</option>
                   <option value="issue-closing-time">Issue Closing Time</option>
                   <option value="issue-response-time">Issue Response Time</option>
@@ -70,7 +55,7 @@
                   <option value="security">Security</option>
                 </select>
                 <select>
-                  <option value="" disabled selected>Select Metric</option>
+                  <option value="" selected>None</option>
                   <option value="backwards-compatibility">Backwards Compatibility</option>
                   <option value="issue-closing-time">Issue Closing Time</option>
                   <option value="issue-response-time">Issue Response Time</option>
@@ -82,7 +67,7 @@
                   <option value="security">Security</option>
                 </select>
                 <select>
-                  <option value="" disabled selected>Select Metric</option>
+                  <option value="" selected>None</option>
                   <option value="backwards-compatibility">Backwards Compatibility</option>
                   <option value="issue-closing-time">Issue Closing Time</option>
                   <option value="issue-response-time">Issue Response Time</option>
@@ -95,8 +80,8 @@
                 </select>
               </div>
               <div class="button-group">
-                <a class="button">Small</a>
-                <a class="button">Button</a>
+                <a class="button">SAVE</a>
+                <a class="button">CANCEL</a>
               </div>
             </form>
           </div>
@@ -126,6 +111,29 @@
            $("#history-section").removeClass("expanded");
         }
       });
+
+      $('#domain').on('change', function (e) {
+          var optionSelected = $("option:selected", this);
+          var valueSelected = $("option:selected")["0"].value;
+          var library_list = {{ domain_list|tojson }}[valueSelected];
+
+          // empty #libraries and append all library checkboxes
+          $("#libraries").empty()
+          $("#libraries").append("<label>Choose Libraries:</label>");
+          for(var i = 0; i < library_list.length; ++i) {
+            $("#libraries").append(
+              "<label for=\"" + library_list[i] +"\">" +
+                "<div>" +
+                  "<input id=\"" + library_list[i] + "\" type=\"checkbox\" checked>" +
+                    library_list[i] +
+                "</div>" +
+              "</label>");
+          }
+      });
+
+
+
+      console.log($('#domain').find(":selected"));
     </script>
   </body>
 </html>
