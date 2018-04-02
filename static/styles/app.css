@@ -35,7 +35,7 @@
   position: absolute;
   box-shadow: 1px -1px 1px;
   width: 100%;
-  height: 150px;
+  height: 200px;
   background-color: var(--main-bg-color);
   padding: 5px;
   overflow: hidden;
@@ -73,20 +73,54 @@
   color: var(--dark-accent-color);
 }
 
+#empty-screen {
+  text-align: center;
+  padding-top: 25%;
+  color: var(--very-light-accent-color);
+  /* TEMPORARY */
+  display: none;
+}
+
+.option-menu {
+  width: 100%;
+  height: 90%;
+}
+
+.flex-grid-wrapper {
+    height:100%;
+    width:100%;
+    border: 1px solid black;
+}
+
+.flex-grid {
+    display: flex;
+    font-size: 0;
+    flex-wrap: wrap;
+    margin:-10px 0 0 -10px;
+    height: 100%;
+}
+.flex-grid a, .flex-grid div {
+    display: inline-block;
+    margin:10px 0 0 10px;
+    flex-grow: 1;
+    height: calc(50% - 10px);
+    width: calc(100% * (1/2) - 10px - 1px);
+}
+
 /* Override Foundation Themes */
 
 #libraries label div {
   font-size: 0.75rem;
 }
 
-.button-group {
+#form-button-group {
   width: calc(100% - 10px);
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: 0.5rem;
 }
 
-.button-group .button {
+#form-button-group .button {
   width: calc(50% - 2px);
   margin: 5px 1px 5px 1px;
 }
