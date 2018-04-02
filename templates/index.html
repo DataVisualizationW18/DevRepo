@@ -15,9 +15,9 @@
           <div id="form-section" class="cell medium-3 large-2">
             <form>
               <div id="domain">
-                <label>Choose Domain:
+                <label class="header">Select Domain:
                   <select>
-                    <option value="" disabled selected>Choose Domain</option>
+                    <option value="" disabled selected>Select Domain</option>
                     {% for o in domain_list %}
                       {% if o %}
                         <option value="{{ o }}">{{ o }}</option>
@@ -29,7 +29,7 @@
               <div id="libraries">
               </div>
               <div id="metrics">
-                <label>Select Metrics:</label>
+                <label class="header">Select Metrics:</label>
                 <select>
                   <option value="" selected>None</option>
                   <option value="backwards-compatibility">Backwards Compatibility</option>
@@ -86,8 +86,13 @@
             </form>
           </div>
           <div id="history-section" class="cell">
-            HISTORY
+            <label class="header">HISTORY</label>
             <button type="button" class="button" id="show-more">See More</button>
+            <!-- Rough history... will need to be reworked to only show one until expanded -->
+            <div style="background-color:black; height: 100px; margin: 5px;"></div>
+            <div style="background-color:black; height: 100px; margin: 5px;"></div>
+            <div style="background-color:black; height: 100px; margin: 5px;"></div>
+            <div style="background-color:black; height: 100px; margin: 5px;"></div>
           </div>
         </div>
       </div>
@@ -105,10 +110,12 @@
         if (!$("#history-section").hasClass("expanded")){
            $("#history-section").animate({height: '100%',},"slow");
            $("#history-section").addClass("expanded");
+           $("#show-more")["0"].textContent = "Show Less";
         }
         else {
            $("#history-section").animate({height: '150px',},"slow");
            $("#history-section").removeClass("expanded");
+           $("#show-more")["0"].textContent = "Show More";
         }
       });
 
@@ -119,7 +126,7 @@
 
           // empty #libraries and append all library checkboxes
           $("#libraries").empty()
-          $("#libraries").append("<label>Choose Libraries:</label>");
+          $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
           for(var i = 0; i < library_list.length; ++i) {
             $("#libraries").append(
               "<label for=\"" + library_list[i] +"\">" +
@@ -130,10 +137,6 @@
               "</label>");
           }
       });
-
-
-
-      console.log($('#domain').find(":selected"));
     </script>
   </body>
 </html>
