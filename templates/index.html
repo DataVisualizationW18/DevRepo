@@ -89,10 +89,10 @@
             <label class="header">HISTORY</label>
             <button type="button" class="button" id="show-more">See More</button>
             <!-- Rough history... will need to be reworked to only show one until expanded -->
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
           </div>
         </div>
       </div>
@@ -126,6 +126,7 @@
         </div>
       </div>
     </div>
+    <div id="result"></div>
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
@@ -141,7 +142,7 @@
            $("#show-more")["0"].textContent = "Show Less";
         }
         else {
-           $("#history-section").animate({height: '200px',},"slow");
+           $("#history-section").animate({height: '210px',},"slow");
            $("#history-section").removeClass("expanded");
            $("#show-more")["0"].textContent = "Show More";
         }
