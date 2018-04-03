@@ -10,15 +10,123 @@
   </head>
   <body>
     <div id="full-page" class="grid-x grid-margin-x">
-      <div id="nav-panel" class="cell medium-3 large-2">NAV PANEL</div>
-      <div class="cell auto">VIZ SCREEN</div>
+      <div id="nav-panel-parent" class="cell medium-3 large-2">
+        <div id="nav-panel" class="grid-y">
+          <div id="form-section" class="cell medium-3 large-2">
+            <form>
+              <div id="domain">
+                <label class="header">Select Domain:
+                  <select>
+                    <option value="" disabled selected>Select Domain</option>
+                    {% for o in domain_list %}
+                      {% if o %}
+                        <option value="{{ o }}">{{ o }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </label>
+              </div>
+              <div id="libraries">
+              </div>
+              <div id="metrics">
+                <label class="header">Select Metrics:</label>
+                <select>
+                  <option value="" selected>None</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+                <select>
+                  <option value="" selected>None</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+                <select>
+                  <option value="" selected>None</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+                <select>
+                  <option value="" selected>None</option>
+                  <option value="backwards-compatibility">Backwards Compatibility</option>
+                  <option value="issue-closing-time">Issue Closing Time</option>
+                  <option value="issue-response-time">Issue Response Time</option>
+                  <option value="last-discussed-on-so">Last Discussed on Stack Overflow</option>
+                  <option value="last-modification-date">Last Modification Date</option>
+                  <option value="performance">Performance</option>
+                  <option value="popularity">Popularity</option>
+                  <option value="release-frequency">Release Frequency</option>
+                  <option value="security">Security</option>
+                </select>
+              </div>
+              <div id="form-button-group" class="button-group">
+                <a class="button">SAVE</a>
+                <a class="button">CANCEL</a>
+              </div>
+            </form>
+          </div>
+          <div id="history-section" class="cell">
+            <label class="header">HISTORY</label>
+            <button type="button" class="button" id="show-more">See More</button>
+            <!-- Rough history... will need to be reworked to only show one until expanded -->
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cell auto">
+        <div id="empty-screen">
+          <h1>WELCOME TO OUR DATA VIZ APP</h1>
+          <p>Steps or something like that will go here</p>
+        </div>
+        <div id="visualizations" class="flex-grid-wrapper">
+          <div class="flex-grid">
+            <div class="visualization" style="background-color: aqua;">1</div>
+            <div class="visualization" style="background-color: aqua;">1</div>
+            <div class="visualization" style="background-color: aqua;">1</div>
+            <div class="visualization" style="background-color: aqua;">1</div>
+          </div>
+        </div>
+
+        <div class="option-menu" style="display: none;">
+          <div id="viz-options-button-wrapper">
+            <div id="viz-options-button-group" class="button-group">
+              <a class="button">1</a>
+              <a class="button">2</a>
+              <a class="button">3</a>
+              <a class="button">4</a>
+            </div>
+          </div>
+          <div id="option-menu-button-group" class="button-group">
+            <a class="button">APPLY CHANGES</a>
+            <a class="button">CANCEL</a>
+          </div>
+        </div>
+      </div>
     </div>
-<!--
-    {% if name %}
-      <h1>Hello {{ name }}!</h1>
-    {% else %}
-      <h1>Hello, World!</h1>
-    {% endif %} -->
+    <div id="result"></div>
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
@@ -26,6 +134,38 @@
 
     <script>
       $(document).foundation();
+
+      $("#show-more").click(function() {
+        if (!$("#history-section").hasClass("expanded")){
+           $("#history-section").animate({height: '100%',},"slow");
+           $("#history-section").addClass("expanded");
+           $("#show-more")["0"].textContent = "Show Less";
+        }
+        else {
+           $("#history-section").animate({height: '210px',},"slow");
+           $("#history-section").removeClass("expanded");
+           $("#show-more")["0"].textContent = "Show More";
+        }
+      });
+
+      $('#domain').on('change', function (e) {
+          var optionSelected = $("option:selected", this);
+          var valueSelected = $("option:selected")["0"].value;
+          var library_list = {{ domain_list|tojson }}[valueSelected];
+
+          // empty #libraries and append all library checkboxes
+          $("#libraries").empty()
+          $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
+          for(var i = 0; i < library_list.length; ++i) {
+            $("#libraries").append(
+              "<label for=\"" + library_list[i] +"\">" +
+                "<div>" +
+                  "<input id=\"" + library_list[i] + "\" type=\"checkbox\" checked>" +
+                    library_list[i] +
+                "</div>" +
+              "</label>");
+          }
+      });
     </script>
   </body>
 </html>
