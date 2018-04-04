@@ -88,11 +88,13 @@
           <div id="history-section" class="cell">
             <label class="header">HISTORY</label>
             <button type="button" class="button" id="show-more">See More</button>
-            <!-- Rough history... will need to be reworked to only show one until expanded -->
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
-            <div style="background-color:black; height: 150px; margin: 5px;"></div>
+            <div id="history-cards">
+              <!-- Rough history... will need to be reworked to only show one until expanded -->
+              <div style="background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;">EMPTY</div>
+              <!-- <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
+              <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
+              <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -138,12 +140,16 @@
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
     <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/underscore-min.js') }}"></script>
 
     <script>
       $(document).foundation();
 
+      var history_queue = []
+
       $("#save-button").click(function() {
         if(!$(this).attr('disabled')) {
+          // set dictionary of current settings
           var data = {}
           var selected_domain = $("#domain :selected")
           var selected_libraries = $("#libraries :checked")
@@ -161,6 +167,16 @@
             }
           }
 
+          // update history
+          if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+            history_queue.push(data);
+            $("#history-cards > div").first().text(JSON.stringify(data))
+          }
+          if(history_queue.length > 4) {
+            history_queue.splice(0, 1);
+          }
+
+          // generate charts
           $.ajax({
            type: "POST",
            contentType: 'application/json',
@@ -267,14 +283,27 @@
 
       $("#show-more").click(function() {
         if (!$("#history-section").hasClass("expanded")){
-           $("#history-section").animate({height: '100%',},"slow");
-           $("#history-section").addClass("expanded");
-           $("#show-more")["0"].textContent = "Show Less";
+          // fade in previous history cards
+          for(var i = history_queue.length - 2; i >= 0; --i) {
+            $("<div style=\"background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;\">" + JSON.stringify(history_queue[i]) + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+          }
+
+          $("#history-section").animate({height: '100%',},"slow");
+          $("#history-section").addClass("expanded");
+          $("#show-more")["0"].textContent = "Show Less";
         }
         else {
-           $("#history-section").animate({height: '200px',},"slow");
-           $("#history-section").removeClass("expanded");
-           $("#show-more")["0"].textContent = "Show More";
+          $("#history-section").animate({height: '200px',},"slow");
+          $("#history-section").removeClass("expanded");
+          $("#show-more")["0"].textContent = "Show More";
+
+          // fade out and remove previous history cards
+          var to_delete = history_queue.length - 1
+          if(to_delete > 0) {
+            $("#history-cards > div").slice(-(history_queue.length - 1)).fadeOut(1000, function() {
+              $(this).remove();
+            });
+          }
         }
       });
     </script>
