@@ -80,7 +80,7 @@
                 </select>
               </div>
               <div id="form-button-group" class="button-group">
-                <a class="button">SAVE</a>
+                <a id="save-button" class="button">SAVE</a>
                 <a class="button">CANCEL</a>
               </div>
             </form>
@@ -141,6 +141,37 @@
 
     <script>
       $(document).foundation();
+
+      $("#save-button").click(function() {
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          data.libraries.push(selected_libraries[i].id)
+        }
+        data.metrics = []
+        for(var i = 0; i < selected_metrics.length; ++i) {
+          if(selected_metrics[i].textContent != "None") {
+            data.metrics.push(selected_metrics[i].textContent)
+          }
+        }
+
+        console.log(data)
+
+         alert('in here')
+         $.ajax({
+           type: "POST",
+           contentType: 'application/json',
+           url: "/handle_data",
+           data: JSON.stringify(data),
+           dataType: 'json'
+         }).done(function( o ) {
+         });
+       });
 
       $("#show-more").click(function() {
         if (!$("#history-section").hasClass("expanded")){
