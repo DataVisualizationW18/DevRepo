@@ -103,10 +103,18 @@
         </div>
         <div id="visualizations" class="flex-grid-wrapper">
           <div class="flex-grid">
-            <div class="visualization" style="background-color: aqua;">1</div>
-            <div class="visualization" style="background-color: aqua;">1</div>
-            <div class="visualization" style="background-color: aqua;">1</div>
-            <div class="visualization" style="background-color: aqua;">1</div>
+            <div class="visualization" style="background-color: aqua;">
+                    <embed type="image/svg+xml" src={{ chart|safe }} />
+              </div>
+            <div class="visualization" style="background-color: aqua;">
+                    <embed type="image/svg+xml" src={{ chart1|safe }} />
+            </div>
+            <div class="visualization" style="background-color: aqua;">
+                    <embed type="image/svg+xml" src={{ chart3|safe }} />
+            </div>
+            <div class="visualization" style="background-color: aqua;">
+                    <embed type="image/svg+xml" src={{ chart4|safe }} />
+            </div>
           </div>
         </div>
 
