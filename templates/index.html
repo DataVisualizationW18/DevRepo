@@ -189,6 +189,7 @@
         // empty #libraries and append all library checkboxes
         $("#libraries").empty()
         $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
+        $("#libraries").append("<label for=\"select_all\" style=\"margin-bottom:5px;font-style:italic\"><div><input id=\"select_all\" type=\"checkbox\" checked>Select All</div></label>");
         for(var i = 0; i < library_list.length; ++i) {
           $("#libraries").append(
             "<label for=\"" + library_list[i] +"\">" +
@@ -199,6 +200,22 @@
             "</label>");
         }
 
+        $("#select_all").on('change', function() {
+          var checkboxes = $("#libraries").find(':checkbox');
+          var is_checked = $(this).is(':checked');
+          checkboxes.prop('checked', is_checked);
+        });
+
+        $(':checkbox').on('change', function() {
+          if($(this)["0"].id != "select_all") {
+            var checkboxes = $("#libraries").find(':checkbox');
+            var checked_checkboxes = $('#libraries').find('input:checked');
+            if(checkboxes.length != checked_checkboxes.length) {
+              $("#select_all").prop('checked', false);
+            }
+          }
+        });
+
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
@@ -208,9 +225,9 @@
           }
         }
         if(selected_libraries.length != 0 && selected_metrics.length != 0) {
-          $('#save-button').removeAttr('disabled');
+          $('#save-button').prop('disabled', false);
         } else {
-          $('#save-button').attr('disabled', true);
+          $('#save-button').prop('disabled', true);
         }
       });
 
@@ -224,9 +241,9 @@
           }
         }
         if(selected_libraries.length != 0 && selected_metrics.length != 0) {
-          $('#save-button').removeAttr('disabled');
+          $('#save-button').prop('disabled', false);
         } else {
-          $('#save-button').attr('disabled', true);
+          $('#save-button').prop('disabled', true);
         }
       });
 
@@ -240,9 +257,9 @@
           }
         }
         if(selected_libraries.length != 0 && selected_metrics.length != 0) {
-          $('#save-button').removeAttr('disabled');
+          $('#save-button').prop('disabled', false);
         } else {
-          $('#save-button').attr('disabled', true);
+          $('#save-button').prop('disabled', true);
         }
       });
 
