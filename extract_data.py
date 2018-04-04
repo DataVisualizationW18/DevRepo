@@ -1,11 +1,11 @@
 import xlrd
 from xlrd import open_workbook
-from datetime import datetime
+from datetime import datetime, date
 
 class Domain(object):
   def __init__(self, name):
     self.name = name
-    self.librarys = []
+    self.libraries = []
 
 class Library(object):
   def __init__(self, name, github_repo, domain):
@@ -20,19 +20,21 @@ class Library(object):
     self.issue_data = []
 
 class IssueData(object):
-  def __init__(self, issueID, issue_creation_date, issue_closing_date, date_of_first_comment, performance_issue, security_issue):
+  def __init__(self, issueID, issue_creation_date, issue_closing_date, date_of_first_comment, performance_issue, security_issue, time_to_close, time_to_response):
     self.issueID = issueID
     self.issue_creation_date = issue_creation_date
     self.issue_closing_date = issue_closing_date
     self.date_of_first_comment = date_of_first_comment
     self.performance_issue = performance_issue
     self.security_issue = security_issue
+    self.time_to_close = time_to_close
+    self.time_to_response = time_to_response
 
 class Date(object):
   def __init__(self, year, month, day):
-    self.year = year
-    self.month = month
-    self.day = day
+    self.year = int(year)
+    self.month = int(month)
+    self.day = int(day)
 
 def getDomainsAndLibraries(sheet):
   global Domains
@@ -46,10 +48,10 @@ def getDomainsAndLibraries(sheet):
     for i in Domains:
       if i.name == values[2]:
         already_created = True
-        i.librarys.append(Library(*values))
+        i.libraries.append(Library(*values))
     if not already_created:
       Domains.append(Domain(values[2]))
-      Domains[len(Domains) - 1].librarys.append(Library(*values))
+      Domains[len(Domains) - 1].libraries.append(Library(*values))
 
 def getPopularity(sheet):
   global Domains
@@ -61,7 +63,7 @@ def getPopularity(sheet):
       values.append(value)
 
     for domain in Domains:
-      for library in domain.librarys:
+      for library in domain.libraries:
         if library.name == values[0]:
           library.popularity = int(values[1])
 
@@ -88,7 +90,7 @@ def getReleaseFrequency(sheet, wb):
         values.append(new_time)
 
     for domain in Domains:
-      for library in domain.librarys:
+      for library in domain.libraries:
         name = library.name.split()
         if name[len(name)-1] == noSpaces[len(noSpaces) - 1]:
           library.release_frequency = values
@@ -104,7 +106,7 @@ def getLastModificationDate(sheet, wb):
       values.append(value)
 
     for domain in Domains:
-      for library in domain.librarys:
+      for library in domain.libraries:
         if library.name == values[0]:
           time = xlrd.xldate.xldate_as_datetime(values[1], wb.datemode)
           library.last_modification_date = Date(int(time.strftime("%Y")), int(time.strftime("%m")), int(time.strftime("%d")))
@@ -125,7 +127,7 @@ def getBackwardsCompatibility(sheet):
         values.append(value)
 
     for domain in Domains:
-      for library in domain.librarys:
+      for library in domain.libraries:
         name = library.name.split()
         if name[len(name)-1] == noSpaces[len(noSpaces) - 1]:
           library.backward_compatibilty = values
@@ -141,7 +143,7 @@ def getLastDiscussedOnStackOverflow(sheet, wb):
       values.append(value)
 
     for domain in Domains:
-      for library in domain.librarys:
+      for library in domain.libraries:
         if library.name == values[0]:
           if values[1] != 'Never':
             time = xlrd.xldate.xldate_as_datetime(values[1], wb.datemode)
@@ -159,7 +161,7 @@ def getIssueData(sheet, wb):
       values.append(value)
 
     for domain in Domains:
-      for library in domain.librarys:
+      for library in domain.libraries:
         if library.name == values[1]:
 
           if type(values[2]) == str and values[2] != 'None':
@@ -189,7 +191,24 @@ def getIssueData(sheet, wb):
             time_4 = Date(int(time4.strftime("%Y")), int(time4.strftime("%m")), int(time4.strftime("%d")))
           else:
             time_4 = None
-          library.issue_data.append(IssueData(values[0], time_2, time_3, time_4, values[5], values[6]))
+
+          if time_3 != None:
+            f_date = date(time_2.year, time_2.month, time_2.day)
+            l_date = date(time_3.year, time_3.month, time_3.day)
+            time_to_close_all = l_date - f_date
+            time_to_close = time_to_close_all.days
+          else:
+            time_to_close = None
+
+          if time_4 != None:
+            f_date = date(time_2.year, time_2.month, time_2.day)
+            l_date = date(time_4.year, time_4.month, time_4.day)
+            time_to_response_all = l_date - f_date
+            time_to_response = time_to_response_all.days
+          else:
+            time_to_response = None
+
+          library.issue_data.append(IssueData(values[0], time_2, time_3, time_4, values[5], values[6], time_to_close, time_to_response))
 
 
 
@@ -236,6 +255,6 @@ if __name__ == '__main__':
   #   print(library.name, library.issue_data[0].issueID)
   for domain in temp:
     print(domain.name)
-    for library in domain.librarys:
+    for library in domain.libraries:
       print(library.name, library.domain)
     print()
