@@ -10,7 +10,7 @@
   </head>
   <body>
     <div id="full-page" class="grid-x grid-margin-x">
-      <div id="nav-panel-parent" class="cell medium-3 large-2">
+      <div id="nav-panel-parent" class="cell small-3">
         <div id="nav-panel" class="grid-y">
           <div id="form-section" class="cell medium-3 large-2">
             <form>
@@ -103,17 +103,17 @@
         </div>
         <div id="visualizations" class="flex-grid-wrapper">
           <div class="flex-grid">
-            <div class="visualization" style="background-color: aqua;">
-                    <embed type="image/svg+xml" src={{ chart|safe }} />
-              </div>
-            <div class="visualization" style="background-color: aqua;">
-                    <embed type="image/svg+xml" src={{ chart1|safe }} />
+            <div id="viz1" class="visualization">
+              <embed id="chart1" type="image/svg+xml" src="" />
             </div>
-            <div class="visualization" style="background-color: aqua;">
-                    <embed type="image/svg+xml" src={{ chart3|safe }} />
+            <div id="viz2" class="visualization">
+              <embed id="chart2" type="image/svg+xml" src="" />
             </div>
-            <div class="visualization" style="background-color: aqua;">
-                    <embed type="image/svg+xml" src={{ chart4|safe }} />
+            <div id="viz3" class="visualization">
+              <embed id="chart3" type="image/svg+xml" src="" />
+            </div>
+            <div id="viz4" class="visualization">
+              <embed id="chart4" type="image/svg+xml" src="" />
             </div>
           </div>
         </div>
@@ -160,18 +160,24 @@
           }
         }
 
-        console.log(data)
-
-         alert('in here')
-         $.ajax({
-           type: "POST",
-           contentType: 'application/json',
-           url: "/handle_data",
-           data: JSON.stringify(data),
-           dataType: 'json'
-         }).done(function( o ) {
-         });
-       });
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          for(var i = 1; i < data.length + 1; ++i) {
+            $("#chart" + i).attr("src", data[i - 1]);
+            $("#chart" + i).css({"display":"inline-block"});
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
+      });
 
       $("#show-more").click(function() {
         if (!$("#history-section").hasClass("expanded")){

@@ -15,7 +15,7 @@
 }
 
 #nav-panel-parent {
-  /* background-color: lightgrey; */
+  min-width: 100px;
 }
 
 #nav-panel {
@@ -24,7 +24,7 @@
 }
 
 #form-section {
-  height: calc(100% - 210px);
+  height: calc(100% - 200px);
   overflow: auto;
   box-shadow: 1px 0px 1px;
   background-color: var(--main-bg-color);
@@ -89,7 +89,7 @@
 .flex-grid-wrapper {
     height:100%;
     width:100%;
-    border: 1px solid black;
+    margin-top: 5px;
 }
 
 .flex-grid {
@@ -99,12 +99,19 @@
     margin:-10px 0 0 -10px;
     height: 100%;
 }
+
 .flex-grid a, .flex-grid div {
     display: inline-block;
     margin:10px 0 0 10px;
     flex-grow: 1;
     height: calc(50% - 10px);
     width: calc(100% * (1/2) - 10px - 1px);
+}
+
+.flex-grid div embed {
+  height: 100%;
+  width: 100%;
+  border: 1px solid var(--dark-color);
 }
 
 /* Override Foundation Themes */
@@ -121,8 +128,8 @@
 }
 
 #form-button-group .button {
-  width: calc(50% - 2px);
-  margin: 5px 1px 5px 1px;
+  width: calc(50% - 6px);
+  margin: 5px 3px 5px 3px;
 }
 
 .button {
