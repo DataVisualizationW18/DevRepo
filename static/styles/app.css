@@ -24,7 +24,7 @@
 }
 
 #form-section {
-  height: calc(100% - 150px);
+  height: calc(100% - 210px);
   overflow: auto;
   box-shadow: 1px 0px 1px;
   background-color: var(--main-bg-color);
