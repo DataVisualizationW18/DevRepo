@@ -81,7 +81,7 @@
               </div>
               <div id="form-button-group" class="button-group">
                 <a id="save-button" class="button" disabled>SAVE</a>
-                <a class="button">CANCEL</a>
+                <a id="cancel-button" class="button">CANCEL</a>
               </div>
             </form>
           </div>
@@ -146,6 +146,29 @@
       $(document).foundation();
 
       var history_queue = []
+
+      // $("#cancel-button").click(function() {
+      //   var data = {}
+      //   var selected_domain = $("#domain :selected")
+      //   var selected_libraries = $("#libraries :checked")
+      //   var selected_metrics = $("#metrics :selected")
+      //
+      //   data.domain = selected_domain["0"].textContent
+      //   data.libraries = []
+      //   for(var i = 0; i < selected_libraries.length; ++i) {
+      //     data.libraries.push(selected_libraries[i].id)
+      //   }
+      //   data.metrics = []
+      //   for(var i = 0; i < selected_metrics.length; ++i) {
+      //     if(selected_metrics[i].textContent != "None") {
+      //       data.metrics.push(selected_metrics[i].textContent)
+      //     }
+      //   }
+      //
+      //   if(!_.isEqual(history_queue[history_queue.length - 1], data)) {
+      //
+      //   }
+      // });
 
       $("#save-button").click(function() {
         if(!$(this).attr('disabled')) {
