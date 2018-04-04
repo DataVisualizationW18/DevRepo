@@ -1,10 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import pygal
 from pygal.style import Style
+from extract_data import getRawData
+
 app = Flask(__name__)
 
 @app.route('/')
 def hello_world(name=None):
+    parsed_domains = getRawData()
+
     domain_list = {
         "": [],
         "cryptography": ["bouncycastle","commons crypto","conceal","chimera","spongycastle","keyczar","conscrypt"],
@@ -19,7 +23,14 @@ def hello_world(name=None):
         "xml": ["xerces2-j","dom4j","jdom"]
     }
 
-    return render_template('index.html',domain_list=domain_list)
+    chart_types = {
+        "release_frequency" : [
+            "bar_chart_with_raw_numbers",
+            "bar_chart_with_average"
+        ]
+    }
+
+    return render_template('index.html',domain_list=domain_list, chart_types=chart_types)
 
 
 @app.route('/generate_chart', methods=['POST'])

@@ -136,6 +136,7 @@
         </div>
       </div>
     </div>
+    <div id="result"></div>
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
@@ -181,12 +182,17 @@
           data.domain = selected_domain["0"].textContent
           data.libraries = []
           for(var i = 0; i < selected_libraries.length; ++i) {
-            data.libraries.push(selected_libraries[i].id)
+            if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+              data.libraries.push(selected_libraries[i].id);
+            }
           }
           data.metrics = []
           for(var i = 0; i < selected_metrics.length; ++i) {
             if(selected_metrics[i].textContent != "None") {
-              data.metrics.push(selected_metrics[i].textContent)
+              data.metrics.push({
+                "metric": selected_metrics[i].textContent,
+                "chart_type": "default"
+              });
             }
           }
 

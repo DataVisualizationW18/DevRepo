@@ -35,7 +35,7 @@
   position: absolute;
   box-shadow: 1px -1px 1px;
   width: 100%;
-  height: 200px;
+  height: 210px;
   background-color: var(--main-bg-color);
   padding: 5px;
   overflow: hidden;
@@ -102,12 +102,35 @@
     height: 100%;
 }
 
+.flex-grid div:only-child {
+  height: calc(100% - 10px);
+  width: calc(100% - 10px - 1px);
+}
+
+.flex-grid div:first-child:nth-last-child(2),
+.flex-grid div:first-child:nth-last-child(2) ~ div {
+  height: calc(100% * (1/2) - 10px);
+  width: calc(100% - 10px - 1px);
+}
+
+.flex-grid div:first-child:nth-last-child(3),
+.flex-grid div:first-child:nth-last-child(3) ~ div {
+  height: calc(100% * (1/2) - 10px);
+  width: calc(100% * (1/2) - 10px - 1px);
+}
+
+.flex-grid div:first-child:nth-last-child(4),
+.flex-grid div:first-child:nth-last-child(4) ~ div {
+  height: calc(100% * (1/2) - 10px);
+  width: calc(100% * (1/2) - 10px - 1px);
+}
+
 .flex-grid a, .flex-grid div {
     display: inline-block;
     margin:10px 0 0 10px;
     flex-grow: 1;
-    height: calc(50% - 10px);
-    width: calc(100% * (1/2) - 10px - 1px);
+    /* height: calc(100% * (1/2) - 10px);
+    width: calc(100% * (1/2) - 10px - 1px); */
 }
 
 .flex-grid div embed {
