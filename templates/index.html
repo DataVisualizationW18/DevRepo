@@ -168,8 +168,10 @@
            data: JSON.stringify(data),
            dataType: 'json'
           }).done(function(data)  {
+            $("#empty-screen").css({"display":"none"});
+            $("#visualizations").css({"display":"inline-block"});
             for(var i = 1; i < data.length + 1; ++i) {
-              $("#chart" + i).attr("src", data[i - 1]);
+              $("#chart" + i).prop("src", data[i - 1]);
               $("#chart" + i).css({"display":"inline-block"});
             }
             for(var i = data.length + 1; i <= 4; ++i) {
@@ -225,9 +227,9 @@
           }
         }
         if(selected_libraries.length != 0 && selected_metrics.length != 0) {
-          $('#save-button').prop('disabled', false);
+          $('#save-button').attr('disabled', false);
         } else {
-          $('#save-button').prop('disabled', true);
+          $('#save-button').attr('disabled', true);
         }
       });
 
@@ -241,9 +243,9 @@
           }
         }
         if(selected_libraries.length != 0 && selected_metrics.length != 0) {
-          $('#save-button').prop('disabled', false);
+          $('#save-button').attr('disabled', false);
         } else {
-          $('#save-button').prop('disabled', true);
+          $('#save-button').attr('disabled', true);
         }
       });
 
@@ -257,9 +259,9 @@
           }
         }
         if(selected_libraries.length != 0 && selected_metrics.length != 0) {
-          $('#save-button').prop('disabled', false);
+          $('#save-button').attr('disabled', false);
         } else {
-          $('#save-button').prop('disabled', true);
+          $('#save-button').attr('disabled', true);
         }
       });
 
