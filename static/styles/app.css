@@ -151,3 +151,13 @@ select {
   height: 50%;
   font-size: 0.75rem;
 }
+
+.button.disabled,
+.button.disabled:hover,
+.button.disabled:focus,
+.button[disabled],
+.button[disabled]:hover,
+.button[disabled]:focus {
+  background-color: var(--light-accent-color);
+  color: var(--main-bg-color);
+}

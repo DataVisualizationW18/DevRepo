@@ -80,7 +80,7 @@
                 </select>
               </div>
               <div id="form-button-group" class="button-group">
-                <a id="save-button" class="button">SAVE</a>
+                <a id="save-button" class="button" disabled>SAVE</a>
                 <a class="button">CANCEL</a>
               </div>
             </form>
@@ -143,40 +143,107 @@
       $(document).foundation();
 
       $("#save-button").click(function() {
-        var data = {}
-        var selected_domain = $("#domain :selected")
-        var selected_libraries = $("#libraries :checked")
-        var selected_metrics = $("#metrics :selected")
+        if(!$(this).attr('disabled')) {
+          var data = {}
+          var selected_domain = $("#domain :selected")
+          var selected_libraries = $("#libraries :checked")
+          var selected_metrics = $("#metrics :selected")
 
-        data.domain = selected_domain["0"].textContent
-        data.libraries = []
-        for(var i = 0; i < selected_libraries.length; ++i) {
-          data.libraries.push(selected_libraries[i].id)
-        }
-        data.metrics = []
-        for(var i = 0; i < selected_metrics.length; ++i) {
-          if(selected_metrics[i].textContent != "None") {
-            data.metrics.push(selected_metrics[i].textContent)
+          data.domain = selected_domain["0"].textContent
+          data.libraries = []
+          for(var i = 0; i < selected_libraries.length; ++i) {
+            data.libraries.push(selected_libraries[i].id)
           }
+          data.metrics = []
+          for(var i = 0; i < selected_metrics.length; ++i) {
+            if(selected_metrics[i].textContent != "None") {
+              data.metrics.push(selected_metrics[i].textContent)
+            }
+          }
+
+          $.ajax({
+           type: "POST",
+           contentType: 'application/json',
+           url: "/generate_chart",
+           data: JSON.stringify(data),
+           dataType: 'json'
+          }).done(function(data)  {
+            for(var i = 1; i < data.length + 1; ++i) {
+              $("#chart" + i).attr("src", data[i - 1]);
+              $("#chart" + i).css({"display":"inline-block"});
+            }
+            for(var i = data.length + 1; i <= 4; ++i) {
+              $("#viz" + i).css({"display":"none"});
+            }
+          }).fail(function(xhr, status, error) {
+            console.log(error);
+          });
+        }
+      });
+
+      $('#domain').on('change', function (e) {
+        var optionSelected = $("option:selected", this);
+        var valueSelected = $("option:selected")["0"].value;
+        var library_list = {{ domain_list|tojson }}[valueSelected];
+
+        // empty #libraries and append all library checkboxes
+        $("#libraries").empty()
+        $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
+        for(var i = 0; i < library_list.length; ++i) {
+          $("#libraries").append(
+            "<label for=\"" + library_list[i] +"\">" +
+              "<div>" +
+                "<input id=\"" + library_list[i] + "\" type=\"checkbox\" checked>" +
+                  library_list[i] +
+              "</div>" +
+            "</label>");
         }
 
-        $.ajax({
-         type: "POST",
-         contentType: 'application/json',
-         url: "/generate_chart",
-         data: JSON.stringify(data),
-         dataType: 'json'
-        }).done(function(data)  {
-          for(var i = 1; i < data.length + 1; ++i) {
-            $("#chart" + i).attr("src", data[i - 1]);
-            $("#chart" + i).css({"display":"inline-block"});
+        var selected_libraries = $("#libraries :checked");
+        var metrics = $("#metrics :selected");
+        var selected_metrics = [];
+        for(var i = 0; i < metrics.length; ++i) {
+          if(metrics[i].innerText != "None") {
+            selected_metrics.push(metrics[i]);
           }
-          for(var i = data.length + 1; i <= 4; ++i) {
-            $("#viz" + i).css({"display":"none"});
+        }
+        if(selected_libraries.length != 0 && selected_metrics.length != 0) {
+          $('#save-button').removeAttr('disabled');
+        } else {
+          $('#save-button').attr('disabled', true);
+        }
+      });
+
+      $("#libraries").on('change', function(e) {
+        var selected_libraries = $("#libraries :checked");
+        var metrics = $("#metrics :selected");
+        var selected_metrics = [];
+        for(var i = 0; i < metrics.length; ++i) {
+          if(metrics[i].innerText != "None") {
+            selected_metrics.push(metrics[i]);
           }
-        }).fail(function(xhr, status, error) {
-          console.log(error);
-        });
+        }
+        if(selected_libraries.length != 0 && selected_metrics.length != 0) {
+          $('#save-button').removeAttr('disabled');
+        } else {
+          $('#save-button').attr('disabled', true);
+        }
+      });
+
+      $("#metrics").on('change', function(e) {
+        var selected_libraries = $("#libraries :checked");
+        var metrics = $("#metrics :selected");
+        var selected_metrics = [];
+        for(var i = 0; i < metrics.length; ++i) {
+          if(metrics[i].innerText != "None") {
+            selected_metrics.push(metrics[i]);
+          }
+        }
+        if(selected_libraries.length != 0 && selected_metrics.length != 0) {
+          $('#save-button').removeAttr('disabled');
+        } else {
+          $('#save-button').attr('disabled', true);
+        }
       });
 
       $("#show-more").click(function() {
@@ -190,25 +257,6 @@
            $("#history-section").removeClass("expanded");
            $("#show-more")["0"].textContent = "Show More";
         }
-      });
-
-      $('#domain').on('change', function (e) {
-          var optionSelected = $("option:selected", this);
-          var valueSelected = $("option:selected")["0"].value;
-          var library_list = {{ domain_list|tojson }}[valueSelected];
-
-          // empty #libraries and append all library checkboxes
-          $("#libraries").empty()
-          $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
-          for(var i = 0; i < library_list.length; ++i) {
-            $("#libraries").append(
-              "<label for=\"" + library_list[i] +"\">" +
-                "<div>" +
-                  "<input id=\"" + library_list[i] + "\" type=\"checkbox\" checked>" +
-                    library_list[i] +
-                "</div>" +
-              "</label>");
-          }
       });
     </script>
   </body>
