@@ -1,8 +1,12 @@
 from flask import Flask, render_template
+from extract_data import getRawData
+
 app = Flask(__name__)
 
 @app.route('/')
 def hello_world(name=None):
+    parsed_domains = getRawData()
+    
     domain_list = {
         "": [],
         "cryptography": ["bouncycastle","commons crypto","conceal","chimera","spongycastle","keyczar","conscrypt"],
