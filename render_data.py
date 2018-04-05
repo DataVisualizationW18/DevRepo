@@ -49,7 +49,7 @@ def generate(libraries, metric, chart_type):
 		if chart_type == 'default' or chart_type == 'xy':
 			chart = generate_xy_chart_issue_response_time(libraries)
 		elif chart_type == 'box':
-			generate_box_chart_issue_response_time(libraries)
+			chart = generate_box_chart_issue_response_time(libraries)
 
 	elif metric == 'issue-closing-time':
 
@@ -70,7 +70,7 @@ def generate(libraries, metric, chart_type):
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_last_discussed(libraries)
 		elif chart_type == 'scatter':
-			chart == generate_scatter_chart_last_discussed(libraries)
+			chart = generate_scatter_chart_last_discussed(libraries)
 
 
 	return chart

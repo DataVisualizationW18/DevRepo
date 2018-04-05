@@ -248,6 +248,7 @@ def handle_one_data():
         chart = generate_table(lib_list, metric['metric'])
         vis_type = 'raw_data'
     else:
+        print(metric['chart_type'])
         chart = generate(lib_list, metric['metric'], metric['chart_type'])
         vis_type = 'chart'
         chart = chart.render_data_uri()
