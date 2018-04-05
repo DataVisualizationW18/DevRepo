@@ -7,7 +7,7 @@ invis_style = Style(background = 'transparent')
 def generate(libraries, metric, chart_type):
 	# default for chart_type is default chart to be created
 	chart = None
-	if metric == 'Popularity':
+	if metric == 'popularity':
 
 		if chart_type == 'default' or chart_type == 'bar_raw':
 			chart = generate_bar_chart_popularity(libraries)
@@ -16,7 +16,7 @@ def generate(libraries, metric, chart_type):
 		elif chart_type == 'gauge':
 			chart = generate_solid_gauge_chart_popularity(libraries)
 
-	elif metric == 'Release Frequency':
+	elif metric == 'release-frequency':
 
 		if chart_type == 'default' or chart_type == 'bar_avg':
 			chart = generate_bar_chart_release_frequency(libraries)
@@ -25,47 +25,47 @@ def generate(libraries, metric, chart_type):
 		elif chart_type == 'line':
 			chart = generate_line_chart_release_frequency(libraries)
 
-	elif metric == 'Last Modification Date':
+	elif metric == 'last-modification-date':
 
 		if chart_type == 'default' or chart_type == 'bar_days':
 			chart = generate_bar_chart_last_modification(libraries)
 
-	elif metric == 'Performance':
+	elif metric == 'performance':
 
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_performance(libraries)
 		elif chart_type == 'gauge':
 			chart = generate_solid_gauge_chart_popularity(libraries)
 
-	elif metric == 'Security':
+	elif metric == 'security':
 
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_security(libraries)
 		elif chart_type == 'gauge':
 			chart = generate_solid_gauge_chart_security(libraries)
 
-	elif metric == 'Issue Response Time':
+	elif metric == 'issue-response-time':
 
 		if chart_type == 'default' or chart_type == 'xy':
 			chart = generate_xy_chart_issue_response_time(libraries)
 		elif chart_type == 'box':
 			generate_box_chart_issue_response_time(libraries)
 
-	elif metric == 'Issue Closing Time':
+	elif metric == 'issue-closing-time':
 
 		if chart_type == 'default' or chart_type == 'xy':
 			chart = generate_xy_chart_issue_closing_time(libraries)
 		elif chart_type == 'box':
 			chart = generate_box_chart_issue_closing_time(libraries)
 
-	elif metric == 'Backwards Compatability':
+	elif metric == 'backwards-compatibility':
 
 		if chart_type == 'default' or chart_type == 'bar':
 			chart = generate_bar_chart_backwards_compatibility(libraries)
 		elif chart_type == 'line':
 			chart = generate_line_chart_backwards_compatibility(libraries)
 
-	elif metric == 'Last Discussed':
+	elif metric == 'last-discussed-on-so':
 
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_last_discussed(libraries)
