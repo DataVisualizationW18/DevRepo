@@ -302,6 +302,7 @@
         }).done(function(data) {
           $("#empty-screen").css({"display":"none"});
           $("#visualizations").css({"display":"inline-block"});
+          // console.log(data.length);
           for(var i = 1; i < data.length + 1; ++i) {
             // console.log(data[i - 1])
             if(_.isEqual(data[i - 1].type, "chart")) {
@@ -312,11 +313,27 @@
               $("#chart" + i + " > div").css({"display": "inline-block"});
               $("#chart" + i + " > embed").css({"display": "none"});
               // THIS IS WHERE WE WILL PUT THE TABLE
+              $("#chart" + i + " > div").append(data);
             }
+            $("#viz" + i).css({"display":"inline-block"});
             $("#chart" + i).css({"display":"inline-block"});
             $("#chart" + i).prop("metric", data[i - 1].metric);
             $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+
+            switch(data.length) {
+              case 1:
+                $("#viz" + i).css({"height": "calc(100% - 10px)", "width": "calc(100% - 10px - 1px)"});
+                break;
+              case 2:
+                $("#viz" + i).css({"height": "calc(100% * (1/2) - 10px)", "width": "calc(100% - 10px - 1px)"})
+                break;
+              case 3:
+              case 4:
+                $("#viz" + i).css({"height": "calc(100% * (1/2) - 10px)", "width": "calc(100% * (1/2) - 10px - 1px)"})
+                break;
+            }
           }
+
           for(var i = data.length + 1; i <= 4; ++i) {
             $("#viz" + i).css({"display":"none"});
           }
@@ -342,7 +359,7 @@
       $('#domain').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = $("option:selected")["0"].value;
-        var library_list = {{ domain_list|tojson }}[valueSelected];
+        var library_list = {{ domain_dict|tojson }}[valueSelected].sort();
 
         // empty #libraries and append all library checkboxes
         $("#libraries").empty()
@@ -537,7 +554,7 @@
 
       $("#viz2-apply").on("click", function(e) {
         showChart(2);
-        $("#chart2")["0"].chart_type = $("#viz2-options-button-group").find(".selected")["0"].chart_type
+        $("#chart2").prop("chart_type", $("#viz2-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
         var data = getDataFromChart();
@@ -555,7 +572,7 @@
 
       $("#viz3-apply").on("click", function(e) {
         showChart(3);
-        $("#chart3")["0"].chart_type = $("#viz3-options-button-group").find(".selected")["0"].chart_type
+        $("#chart3").prop("chart_type", $("#viz3-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
         var data = getDataFromChart();
@@ -573,7 +590,7 @@
 
       $("#viz4-apply").on("click", function(e) {
         showChart(4);
-        $("#chart4")["0"].chart_type = $("#viz4-options-button-group").find(".selected")["0"].chart_type
+        $("#chart4").prop("chart_type", $("#viz4-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
         var data = getDataFromChart();

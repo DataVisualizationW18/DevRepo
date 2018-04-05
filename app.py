@@ -10,10 +10,22 @@ parsed_domains = None
 
 @app.route('/')
 def hello_world(name=None):
-    global parsed_domains 
+    global parsed_domains
     parsed_domains = getRawData()
 
-    domain_list = {
+    domain_list = ["",
+                   "cryptography",
+                   "databases",
+                   "json",
+                   "logging",
+                   "mocking",
+                   "object-relational-mapping",
+                   "security",
+                   "testing",
+                   "utilities",
+                   "xml"]
+
+    domain_dict = {
         "": [],
         "cryptography": ["bouncycastle","commons crypto","conceal","chimera","spongycastle","keyczar","conscrypt"],
         "databases": ["h2","derby"],
@@ -75,7 +87,7 @@ def hello_world(name=None):
         ]
     }
 
-    return render_template('index.html',domain_list=domain_list, chart_types=chart_types)
+    return render_template('index.html',domain_list=domain_list, domain_dict=domain_dict, chart_types=chart_types)
 
 
 @app.route('/generate_chart', methods=['POST'])
@@ -151,7 +163,7 @@ def handle_data():
             chart = generate(lib_list, metric['metric'], metric['chart_type'])
             vis_type = 'chart'
 
-        def_chart= metric['chart_type'] 
+        def_chart= metric['chart_type']
         if def_chart == 'default':
             def_chart = default_dict[metric['metric']]
 

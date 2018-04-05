@@ -123,7 +123,7 @@
     height: 100%;
 }
 
-.visualization:only-child {
+/* .visualization:only-child {
   height: calc(100% - 10px);
   width: calc(100% - 10px - 1px);
 }
@@ -144,7 +144,7 @@
 .visualization:first-child:nth-last-child(4) ~ div {
   height: calc(100% * (1/2) - 10px);
   width: calc(100% * (1/2) - 10px - 1px);
-}
+} */
 
 .visualization {
     display: inline-block;
