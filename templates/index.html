@@ -534,18 +534,22 @@
         showChart(1);
         $("#chart1").prop("chart_type", $("#viz1-options-button-group").find(".selected")["0"].chart_type)
 
-        // console.log($("#viz1-options-button-group").find(".selected")["0"].chart_type)
-        // console.log($("#chart1")["0"].chart_type)
-        // console.log($("#chart1")["0"].chart_type == $("#viz1-options-button-group").find(".selected")["0"].chart_type)
         // set dictionary of current settings
         var data = getDataFromChart();
 
         // update history
+        console.log($("#history-section").hasClass("expanded"))
         if($("#history-section").hasClass("expanded")) {
           appendToHistory(data)
           updateAllHistory()
         } else {
           updateHistory(data)
+        }
+
+        delete data.metrics
+        data.metric = {
+          "metric": $("#chart1").prop("metric"),
+          "chart_type": $("#chart1").prop("chart_type")
         }
 
         generateOneChart(data, 1)
@@ -560,11 +564,18 @@
         var data = getDataFromChart();
 
         // update history
+        console.log($("#history-section").hasClass("expanded"))
         if($("#history-section").hasClass("expanded")) {
           appendToHistory(data)
           updateAllHistory()
         } else {
           updateHistory(data)
+        }
+
+        delete data.metrics
+        data.metric = {
+          "metric": $("#chart2").prop("metric"),
+          "chart_type": $("#chart2").prop("chart_type")
         }
 
         generateOneChart(data, 2)
@@ -578,11 +589,18 @@
         var data = getDataFromChart();
 
         // update history
+        console.log($("#history-section").hasClass("expanded"))
         if($("#history-section").hasClass("expanded")) {
           appendToHistory(data)
           updateAllHistory()
         } else {
           updateHistory(data)
+        }
+
+        delete data.metrics
+        data.metric = {
+          "metric": $("#chart3").prop("metric"),
+          "chart_type": $("#chart3").prop("chart_type")
         }
 
         generateOneChart(data, 3)
@@ -596,11 +614,18 @@
         var data = getDataFromChart();
 
         // update history
+        console.log($("#history-section").hasClass("expanded"))
         if($("#history-section").hasClass("expanded")) {
           appendToHistory(data)
           updateAllHistory()
         } else {
           updateHistory(data)
+        }
+
+        delete data.metrics
+        data.metric = {
+          "metric": $("#chart4").prop("metric"),
+          "chart_type": $("#chart4").prop("chart_type")
         }
 
         generateOneChart(data, 4)
@@ -674,13 +699,14 @@
           var data = history_queue[i]
           var card_string = makeHistoryString(data)
           var index = history_queue.length - i
-          // console.log(index, data)
-          // console.log($($("#history-cards > div")[index - 1]))
+          console.log(index, data)
+          console.log($($("#history-cards > div")[index - 1]))
           if($($("#history-cards > div")[index - 1]).length > 0) {
             $($("#history-cards > div")[index - 1]).empty()
             $($("#history-cards > div")[index - 1]).append(card_string)
             $($("#history-cards > div")[index - 1]).history_queue_index = i
             $($("#history-cards > div")[index - 1]).on("click", function() {
+              console.log($(this))
               var data = getData();
               var i = $(this)["0"].history_queue_index
               var last_history = history_queue[i]
@@ -689,28 +715,32 @@
                 condenseHistorySection()
                 history_queue.splice(i, 1);
                 history_queue.push(last_history);
-                // $(this).css("transform", "translateY(-50px)");
                 updateFirstHistory(last_history)
+                generateCharts(last_history)
               }
             });
           } else {
-            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
-            $("#history-card" + index)["0"].history_queue_index = i
-            $("#history-card" + index).on("click", function() {
-              var data = getData();
-              var i = $(this)["0"].history_queue_index
-              var last_history = history_queue[i]
-              if(!_.isEqual(last_history, data)) {
-                resetNavPanel(last_history)
-                condenseHistorySection()
-                history_queue.splice(i, 1);
-                history_queue.push(last_history);
-                // $(this).css("transform", "translateY(-50px)");
-                updateFirstHistory(last_history)
-              }
-            });
+            addNewHistoryCard(i, index, card_string)
           }
         }
+      }
+
+      var addNewHistoryCard = function(i, index, card_string) {
+        $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+        $("#history-card" + index).prop("history_queue_index", i)
+        $("#history-card" + index).on("click", function() {
+          var data = getData();
+          var i = $(this).prop("history_queue_index")
+          var last_history = history_queue[i]
+          if(!_.isEqual(last_history, data)) {
+            resetNavPanel(last_history)
+            condenseHistorySection()
+            history_queue.splice(i, 1);
+            history_queue.push(last_history);
+            updateFirstHistory(last_history)
+            generateCharts(last_history)
+          }
+        });
       }
 
       var updateFirstHistory = function(data) {
@@ -744,22 +774,10 @@
           // fade in previous history cards
           for(var i = history_queue.length - 2; i >= 0; --i) {
             var data = history_queue[i]
+            console.log(data)
             var card_string = makeHistoryString(data)
             var index = history_queue.length - i
-            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
-            $("#history-card" + index)["0"].history_queue_index = i
-            $("#history-card" + index).on("click", function() {
-              var data = getData();
-              var i = $(this)["0"].history_queue_index
-              var last_history = history_queue[i]
-              if(!_.isEqual(last_history, data)) {
-                resetNavPanel(last_history)
-                condenseHistorySection()
-                history_queue.splice(i, 1);
-                history_queue.push(last_history);
-                updateFirstHistory(last_history)
-              }
-            });
+            addNewHistoryCard(i, index, card_string)
           }
 
           $("#history-section").animate({height: '100%',},"slow");
