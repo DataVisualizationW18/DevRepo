@@ -73,6 +73,15 @@
   color: var(--dark-accent-color);
 }
 
+.history-card {
+  background-color: var(--very-light-accent-color);
+  color: var(--dark-accent-color);
+  height: calc(100vh * (1/5));
+  margin: 10px;
+  font-size: 0.5rem;
+  padding: 10px;
+}
+
 #empty-screen {
   text-align: center;
   padding-top: 25%;

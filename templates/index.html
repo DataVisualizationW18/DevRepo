@@ -91,7 +91,7 @@
             <button type="button" class="button" id="show-more">See More</button>
             <div id="history-cards">
               <!-- Rough history... will need to be reworked to only show one until expanded -->
-              <div style="background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;">EMPTY</div>
+              <div class="history-card"></div>
               <!-- <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
               <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
               <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div> -->
@@ -211,7 +211,24 @@
       var updateHistory = function(data) {
         if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
           history_queue.push(data);
-          $("#history-cards > div").first().text(JSON.stringify(data))
+          var card_string = "<p>Domain: " + data.domain + "</p>" +
+                            "<p>Libraries: "
+          for(var i = 0; i < data.libraries.length; ++i) {
+            card_string += data.libraries[i]
+            if(i < data.libraries.length - 1) {
+              card_string += ", "
+            }
+          }
+          card_string += "</p><p>Metrics: "
+          for(var i = 0; i < data.metrics.length; ++i) {
+            card_string += data.metrics[i].metric + " (" + data.metrics[i].chart_type + ")"
+            if(i < data.metrics.length - 1) {
+              card_string += ", "
+            }
+          }
+          card_string += "</p>"
+          $("#history-cards > div").first().empty()
+          $("#history-cards > div").first().append(card_string)
         }
         if(history_queue.length > 4) {
           history_queue.splice(0, 1);
@@ -273,7 +290,6 @@
             $("#chart" + i).css({"display":"inline-block"});
             $("#chart" + i).prop("metric", data[i - 1].metric);
             $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
-            console.log($("#chart" + i));
           }
           for(var i = data.length + 1; i <= 4; ++i) {
             $("#viz" + i).css({"display":"none"});
@@ -386,7 +402,24 @@
         if (!$("#history-section").hasClass("expanded")){
           // fade in previous history cards
           for(var i = history_queue.length - 2; i >= 0; --i) {
-            $("<div style=\"background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;\">" + JSON.stringify(history_queue[i]) + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            var data = history_queue[i]
+            var card_string = "<p>Domain: " + data.domain + "</p>" +
+                              "<p>Libraries: "
+            for(var j = 0; j < data.libraries.length; ++j) {
+              card_string += data.libraries[j]
+              if(i < data.libraries.length - 1) {
+                card_string += ", "
+              }
+            }
+            card_string += "</p><p>Metrics: "
+            for(var j = 0; j < data.metrics.length; ++j) {
+              card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
+              if(j < data.metrics.length - 1) {
+                card_string += ", "
+              }
+            }
+            card_string += "</p>"
+            $("<div class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
           }
 
           $("#history-section").animate({height: '100%',},"slow");
@@ -507,8 +540,6 @@
         // update history
         updateHistory(data)
 
-        console.log(data)
-
         generateCharts(data)
       });
 
@@ -521,8 +552,6 @@
 
         // update history
         updateHistory(data)
-
-        console.log(data)
 
         generateCharts(data)
       });
@@ -537,8 +566,6 @@
         // update history
         updateHistory(data)
 
-        console.log(data)
-
         generateCharts(data)
       });
 
@@ -551,8 +578,6 @@
 
         // update history
         updateHistory(data)
-
-        console.log(data)
 
         generateCharts(data)
       });
