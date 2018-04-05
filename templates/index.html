@@ -10,7 +10,7 @@
   </head>
   <body>
     <div id="full-page" class="grid-x grid-margin-x">
-      <div id="nav-panel-parent" class="cell medium-3 large-2">
+      <div id="nav-panel-parent" class="cell small-3">
         <div id="nav-panel" class="grid-y">
           <div id="form-section" class="cell medium-3 large-2">
             <form>
@@ -80,19 +80,21 @@
                 </select>
               </div>
               <div id="form-button-group" class="button-group">
-                <a class="button">SAVE</a>
-                <a class="button">CANCEL</a>
+                <a id="save-button" class="button" disabled>SAVE</a>
+                <a id="cancel-button" class="button">CANCEL</a>
               </div>
             </form>
           </div>
           <div id="history-section" class="cell">
             <label class="header">HISTORY</label>
             <button type="button" class="button" id="show-more">See More</button>
-            <!-- Rough history... will need to be reworked to only show one until expanded -->
-            <div style="background-color:black; height: 150px; margin: 10px;"></div>
-            <div style="background-color:black; height: 150px; margin: 10px;"></div>
-            <div style="background-color:black; height: 150px; margin: 10px;"></div>
-            <div style="background-color:black; height: 150px; margin: 10px;"></div>
+            <div id="history-cards">
+              <!-- Rough history... will need to be reworked to only show one until expanded -->
+              <div style="background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;">EMPTY</div>
+              <!-- <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
+              <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
+              <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -103,10 +105,18 @@
         </div>
         <div id="visualizations" class="flex-grid-wrapper">
           <div class="flex-grid">
-            <div class="visualization" style="background-color: aqua;">1</div>
-            <div class="visualization" style="background-color: aqua;">1</div>
-            <div class="visualization" style="background-color: aqua;">1</div>
-            <div class="visualization" style="background-color: aqua;">1</div>
+            <div id="viz1" class="visualization">
+              <embed id="chart1" type="image/svg+xml" src="" />
+            </div>
+            <div id="viz2" class="visualization">
+              <embed id="chart2" type="image/svg+xml" src="" />
+            </div>
+            <div id="viz3" class="visualization">
+              <embed id="chart3" type="image/svg+xml" src="" />
+            </div>
+            <div id="viz4" class="visualization">
+              <embed id="chart4" type="image/svg+xml" src="" />
+            </div>
           </div>
         </div>
 
@@ -131,40 +141,205 @@
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
     <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/underscore-min.js') }}"></script>
 
     <script>
       $(document).foundation();
 
-      $("#show-more").click(function() {
-        if (!$("#history-section").hasClass("expanded")){
-           $("#history-section").animate({height: '100%',},"slow");
-           $("#history-section").addClass("expanded");
-           $("#show-more")["0"].textContent = "Show Less";
-        }
-        else {
-           $("#history-section").animate({height: '210px',},"slow");
-           $("#history-section").removeClass("expanded");
-           $("#show-more")["0"].textContent = "Show More";
+      var history_queue = []
+
+      // $("#cancel-button").click(function() {
+      //   var data = {}
+      //   var selected_domain = $("#domain :selected")
+      //   var selected_libraries = $("#libraries :checked")
+      //   var selected_metrics = $("#metrics :selected")
+      //
+      //   data.domain = selected_domain["0"].textContent
+      //   data.libraries = []
+      //   for(var i = 0; i < selected_libraries.length; ++i) {
+      //     data.libraries.push(selected_libraries[i].id)
+      //   }
+      //   data.metrics = []
+      //   for(var i = 0; i < selected_metrics.length; ++i) {
+      //     if(selected_metrics[i].textContent != "None") {
+      //       data.metrics.push(selected_metrics[i].textContent)
+      //     }
+      //   }
+      //
+      //   if(!_.isEqual(history_queue[history_queue.length - 1], data)) {
+      //
+      //   }
+      // });
+
+
+      $("#save-button").click(function() {
+        if(!$(this).attr('disabled')) {
+          // set dictionary of current settings
+          var data = {}
+          var selected_domain = $("#domain :selected")
+          var selected_libraries = $("#libraries :checked")
+          var selected_metrics = $("#metrics :selected")
+
+          data.domain = selected_domain["0"].textContent
+          data.libraries = []
+          for(var i = 0; i < selected_libraries.length; ++i) {
+            if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+              data.libraries.push(selected_libraries[i].id);
+            }
+          }
+          data.metrics = []
+          for(var i = 0; i < selected_metrics.length; ++i) {
+            if(selected_metrics[i].textContent != "None") {
+              data.metrics.push({
+                "metric": selected_metrics[i].textContent,
+                "chart_type": "default"
+              });
+            }
+          }
+
+          // update history
+          if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+            history_queue.push(data);
+            $("#history-cards > div").first().text(JSON.stringify(data))
+          }
+          if(history_queue.length > 4) {
+            history_queue.splice(0, 1);
+          }
+
+          // generate charts
+          // TYLER THIS IS THE PLACE
+          $.ajax({
+           type: "POST",
+           contentType: 'application/json',
+           url: "/generate_chart",
+           data: JSON.stringify(data),
+           dataType: 'json'
+          }).done(function(data)  {
+            $("#empty-screen").css({"display":"none"});
+            $("#visualizations").css({"display":"inline-block"});
+            for(var i = 1; i < data.length + 1; ++i) {
+              $("#chart" + i).prop("src", data[i - 1].data);
+              $("#chart" + i).css({"display":"inline-block"});
+            }
+            for(var i = data.length + 1; i <= 4; ++i) {
+              $("#viz" + i).css({"display":"none"});
+            }
+
+            // IF DATA[index].type is raw_data DO THIS
+            // $("#viz1").empty();
+            // $("#viz1").append(data[0].data);
+          }).fail(function(xhr, status, error) {
+            console.log(error);
+          });
         }
       });
 
       $('#domain').on('change', function (e) {
-          var optionSelected = $("option:selected", this);
-          var valueSelected = $("option:selected")["0"].value;
-          var library_list = {{ domain_list|tojson }}[valueSelected];
+        var optionSelected = $("option:selected", this);
+        var valueSelected = $("option:selected")["0"].value;
+        var library_list = {{ domain_list|tojson }}[valueSelected];
 
-          // empty #libraries and append all library checkboxes
-          $("#libraries").empty()
-          $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
-          for(var i = 0; i < library_list.length; ++i) {
-            $("#libraries").append(
-              "<label for=\"" + library_list[i] +"\">" +
-                "<div>" +
-                  "<input id=\"" + library_list[i] + "\" type=\"checkbox\" checked>" +
-                    library_list[i] +
-                "</div>" +
-              "</label>");
+        // empty #libraries and append all library checkboxes
+        $("#libraries").empty()
+        $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
+        $("#libraries").append("<label for=\"select_all\" style=\"margin-bottom:5px;font-style:italic\"><div><input id=\"select_all\" type=\"checkbox\" checked>Select All</div></label>");
+        for(var i = 0; i < library_list.length; ++i) {
+          $("#libraries").append(
+            "<label for=\"" + library_list[i] +"\">" +
+              "<div>" +
+                "<input id=\"" + library_list[i] + "\" type=\"checkbox\" checked>" +
+                  library_list[i] +
+              "</div>" +
+            "</label>");
+        }
+
+        $("#select_all").on('change', function() {
+          var checkboxes = $("#libraries").find(':checkbox');
+          var is_checked = $(this).is(':checked');
+          checkboxes.prop('checked', is_checked);
+        });
+
+        $(':checkbox').on('change', function() {
+          if($(this)["0"].id != "select_all") {
+            var checkboxes = $("#libraries").find(':checkbox');
+            var checked_checkboxes = $('#libraries').find('input:checked');
+            if(checkboxes.length != checked_checkboxes.length) {
+              $("#select_all").prop('checked', false);
+            }
           }
+        });
+
+        var selected_libraries = $("#libraries :checked");
+        var metrics = $("#metrics :selected");
+        var selected_metrics = [];
+        for(var i = 0; i < metrics.length; ++i) {
+          if(metrics[i].innerText != "None") {
+            selected_metrics.push(metrics[i]);
+          }
+        }
+        if(selected_libraries.length != 0 && selected_metrics.length != 0) {
+          $('#save-button').attr('disabled', false);
+        } else {
+          $('#save-button').attr('disabled', true);
+        }
+      });
+
+      $("#libraries").on('change', function(e) {
+        var selected_libraries = $("#libraries :checked");
+        var metrics = $("#metrics :selected");
+        var selected_metrics = [];
+        for(var i = 0; i < metrics.length; ++i) {
+          if(metrics[i].innerText != "None") {
+            selected_metrics.push(metrics[i]);
+          }
+        }
+        if(selected_libraries.length != 0 && selected_metrics.length != 0) {
+          $('#save-button').attr('disabled', false);
+        } else {
+          $('#save-button').attr('disabled', true);
+        }
+      });
+
+      $("#metrics").on('change', function(e) {
+        var selected_libraries = $("#libraries :checked");
+        var metrics = $("#metrics :selected");
+        var selected_metrics = [];
+        for(var i = 0; i < metrics.length; ++i) {
+          if(metrics[i].innerText != "None") {
+            selected_metrics.push(metrics[i]);
+          }
+        }
+        if(selected_libraries.length != 0 && selected_metrics.length != 0) {
+          $('#save-button').attr('disabled', false);
+        } else {
+          $('#save-button').attr('disabled', true);
+        }
+      });
+
+      $("#show-more").click(function() {
+        if (!$("#history-section").hasClass("expanded")){
+          // fade in previous history cards
+          for(var i = history_queue.length - 2; i >= 0; --i) {
+            $("<div style=\"background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;\">" + JSON.stringify(history_queue[i]) + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+          }
+
+          $("#history-section").animate({height: '100%',},"slow");
+          $("#history-section").addClass("expanded");
+          $("#show-more")["0"].textContent = "Show Less";
+        }
+        else {
+          $("#history-section").animate({height: '200px',},"slow");
+          $("#history-section").removeClass("expanded");
+          $("#show-more")["0"].textContent = "Show More";
+
+          // fade out and remove previous history cards
+          var to_delete = history_queue.length - 1
+          if(to_delete > 0) {
+            $("#history-cards > div").slice(-(history_queue.length - 1)).fadeOut(1000, function() {
+              $(this).remove();
+            });
+          }
+        }
       });
     </script>
   </body>

@@ -15,7 +15,7 @@
 }
 
 #nav-panel-parent {
-  /* background-color: lightgrey; */
+  min-width: 100px;
 }
 
 #nav-panel {
@@ -24,7 +24,7 @@
 }
 
 #form-section {
-  height: calc(100% - 210px);
+  height: calc(100% - 200px);
   overflow: auto;
   box-shadow: 1px 0px 1px;
   background-color: var(--main-bg-color);
@@ -77,7 +77,9 @@
   text-align: center;
   padding-top: 25%;
   color: var(--very-light-accent-color);
-  /* TEMPORARY */
+}
+
+#visualizations {
   display: none;
 }
 
@@ -89,7 +91,7 @@
 .flex-grid-wrapper {
     height:100%;
     width:100%;
-    border: 1px solid black;
+    margin-top: 5px;
 }
 
 .flex-grid {
@@ -131,6 +133,12 @@
     width: calc(100% * (1/2) - 10px - 1px); */
 }
 
+.flex-grid div embed {
+  height: 100%;
+  width: 100%;
+  border: 1px solid var(--dark-color);
+}
+
 /* Override Foundation Themes */
 
 #libraries label div {
@@ -145,8 +153,8 @@
 }
 
 #form-button-group .button {
-  width: calc(50% - 2px);
-  margin: 5px 1px 5px 1px;
+  width: calc(50% - 6px);
+  margin: 5px 3px 5px 3px;
 }
 
 .button {
@@ -167,4 +175,14 @@ select {
   width: calc(100% - 10px);
   height: 50%;
   font-size: 0.75rem;
+}
+
+.button.disabled,
+.button.disabled:hover,
+.button.disabled:focus,
+.button[disabled],
+.button[disabled]:hover,
+.button[disabled]:focus {
+  background-color: var(--light-accent-color);
+  color: var(--main-bg-color);
 }
