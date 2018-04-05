@@ -283,6 +283,10 @@
            $("#chart" + index + " > div").css({"display": "inline-block"});
            $("#chart" + index + " > embed").css({"display": "none"});
            // THIS IS WHERE WE WILL PUT THE TABLE
+           console.log(data.data)
+           console.log($("#chart" + index + " > div"))
+           $("#chart" + index + " > div").empty()
+           $("#chart" + index + " > div").append(data.data);
          }
          $("#chart" + index).css({"display":"inline-block"});
          $("#chart" + index).prop("metric", data.metric);

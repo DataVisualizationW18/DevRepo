@@ -3,7 +3,7 @@ def generate_table(libraries, metric):
     metric = metric.lower()
 
     if metric == 'popularity':
-        html ="""
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
         <table class="hover"> 
             <thead>
                 <tr>
@@ -23,10 +23,11 @@ def generate_table(libraries, metric):
     
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
-    elif metric == 'last modification date':
-        html ="""
+    elif metric == 'last-modification-date':
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
         <table class="hover"> 
             <thead>
                 <tr>
@@ -46,10 +47,11 @@ def generate_table(libraries, metric):
     
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
-    elif metric == 'last discussed':
-        html ="""
+    elif metric == 'last-discussed-on-so':
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
             <table class="hover"> 
             <thead>
                 <tr>
@@ -78,11 +80,12 @@ def generate_table(libraries, metric):
     
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
     elif metric == 'performance':
 
-        html ="""
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
             <table class="hover"> 
             <thead>
                 <tr>
@@ -116,11 +119,12 @@ def generate_table(libraries, metric):
 
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
     elif metric == 'security':
         
-        html ="""
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
             <table class="hover"> 
             <thead>
                 <tr>
@@ -154,10 +158,11 @@ def generate_table(libraries, metric):
 
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
-    elif metric == 'issue response time':
-        html ="""
+    elif metric == 'issue-response-time':
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
             <table class="hover"> 
             <thead>
                 <tr>
@@ -186,10 +191,11 @@ def generate_table(libraries, metric):
 
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
-    elif metric == 'issue closing time':
-        html ="""
+    elif metric == 'issue-closing-time':
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
             <table class="hover"> 
             <thead>
                 <tr>
@@ -204,32 +210,31 @@ def generate_table(libraries, metric):
         for library in libraries:
             for issue in library.issue_data:
                 
-                if issue.security_issue.lower() == 'yes':               
+                date1 = date_check(issue.issue_creation_date)
+                date2 = date_check(issue.issue_closing_date)
 
-                    date1 = date_check(issue.issue_creation_date)
-                    date2 = date_check(issue.issue_closing_date)
-
-                    row = """
+                row = """
                     <tr>
                         <td>""" + str(issue.issueID) + """</td>
                         <td>""" + library.name + """</td>
                         <td>""" + date1 + """</td>
                         <td>""" + date2 + """</td>
                     </tr>"""
-                    html+=row
+                html+=row
 
         html +="""
             </tbody>
-        </table>"""
+        </table>
+        </div>"""
 
     # also trouble
-    elif metric == 'backwards compatibility':
+    elif metric == 'backwards-compatibility':
 
-        html ="""
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
             <table class="hover"> 
             <thead>
                 <tr>
-                    <th width="150">Library / Release Number</th>"""
+                    <th width="400">Library / Release Number</th>"""
 
         max_release = 0
         for library in libraries:
@@ -239,11 +244,13 @@ def generate_table(libraries, metric):
         count = 1
         while count <= max_release:
             html+= """
-            <th width="150">"""+str(count)+"""</th>"""
+            <th width="400">"""+str(count)+"""</th>"""
             count+=1
 
         html+= """"
-        </tr>"""
+        </tr>
+        </thead>
+        <tbody>"""
 
         for library in libraries:
             row = """
@@ -261,12 +268,38 @@ def generate_table(libraries, metric):
         
         html +="""
             </tbody>
-        </table>"""     
+        </table>
+        </div>"""     
 
     #this one is trouble
-    elif metric == 'release frequency':
-        pass
+    elif metric == 'release-frequency':
 
+        html ="""<div style="overflow-x:auto; overflow-y:auto;">
+            <table class="hover"> 
+            <thead>
+                <tr>
+                    <th width="150">Library</th>
+                    </tr>
+                    </thead>
+                    <tbody>"""
+
+        for library in libraries:
+            row = """
+                    <tr>
+                        <td>""" + library.name + """</td>"""
+            for release in library.release_frequency:
+                row += """
+                    <td>""" + release.toStr() + """</td>"""
+            
+            row += """
+                </td>"""
+            html+=row
+
+        html +="""
+            </tbody>
+        </table>
+        </div>""" 
+        
     return(html)
 
 def date_check(date):

@@ -19,7 +19,7 @@ def hello_world(name=None):
                    "json",
                    "logging",
                    "mocking",
-                   "object-relational-mapping",
+                   "object-relational mapping",
                    "security",
                    "testing",
                    "utilities",
@@ -32,7 +32,7 @@ def hello_world(name=None):
         "json": ["gson","json.simple"],
         "logging": ["slf4j","log4j2","logback","commons logging","tinylog","blitz4j","minlog"],
         "mocking": ["mockito","easymock","powermock","jmock"],
-        "object-relational-mapping": ["hibernate orm","mybatis3","ormlite"],
+        "object-relational mapping": ["hibernate orm","mybatis3","ormlite"],
         "security": ["shiro","spring security"],
         "testing": ["junit4","testng"],
         "utilities": ["guava","commons lang"],
@@ -146,7 +146,6 @@ def handle_data():
     charts=[]
 
     for metric in metric_dict['metrics']:
-       # print(metric)
 
         lib_list=[]
         for domain in parsed_domains:
@@ -158,6 +157,7 @@ def handle_data():
         # generate_table(libraries, metric):
         if metric['chart_type'] == 'raw_data':
             chart = generate_table(lib_list, metric['metric'])
+            print(chart)
             vis_type = 'raw_data'
         else:
             chart = generate(lib_list, metric['metric'], metric['chart_type'])
@@ -234,7 +234,6 @@ def handle_one_data():
                     'last-discussed-on-so':'box'}
 
     metric_dict = request.json
-    print(metric_dict)
     metric = metric_dict['metric']
 
     lib_list=[]
@@ -262,7 +261,5 @@ def handle_one_data():
         'data': chart,
         'chart_type': def_chart
         }
-
-    print(request.json)
 
     return jsonify(chart_dict)
