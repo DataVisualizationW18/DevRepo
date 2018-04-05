@@ -264,6 +264,34 @@
         }
       });
 
+      var generateOneChart = function(data, index) {
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_one_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+       }).done(function(data) {
+         // console.log(index);
+         $("#empty-screen").css({"display":"none"});
+         $("#visualizations").css({"display":"inline-block"});
+         if(_.isEqual(data.type, "chart")) {
+           $("#chart" + index + " > embed").prop("src", data.data);
+           $("#chart" + index + " > embed").css({"display": "inline-block"});
+           $("#chart" + index + " > div").css({"display": "none"});
+         } else if (_.isEqual(data.type, "raw_data")) {
+           $("#chart" + index + " > div").css({"display": "inline-block"});
+           $("#chart" + index + " > embed").css({"display": "none"});
+           // THIS IS WHERE WE WILL PUT THE TABLE
+         }
+         $("#chart" + index).css({"display":"inline-block"});
+         $("#chart" + index).prop("metric", data.metric);
+         $("#chart" + index).prop("chart_type", data.chart_type);
+       }).fail(function(xhr, status, error) {
+         console.log(error);
+       });
+      }
+
       var generateCharts = function(data) {
         $.ajax({
          type: "POST",
@@ -271,7 +299,7 @@
          url: "/generate_chart",
          data: JSON.stringify(data),
          dataType: 'json'
-        }).done(function(data)  {
+        }).done(function(data) {
           $("#empty-screen").css({"display":"none"});
           $("#visualizations").css({"display":"inline-block"});
           for(var i = 1; i < data.length + 1; ++i) {
@@ -503,7 +531,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 1)
         // console.log($("#chart1"))
       });
 
@@ -522,7 +550,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 2)
       });
 
       $("#viz3-apply").on("click", function(e) {
@@ -540,7 +568,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 3)
       });
 
       $("#viz4-apply").on("click", function(e) {
@@ -558,7 +586,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 4)
       });
 
       $("#viz1-cancel").on("click", function(e) {
@@ -608,7 +636,6 @@
 
       var condenseHistorySection = function() {
         var is_expanded = $("#history-section").hasClass("expanded");
-        console.log(is_expanded)
         if(is_expanded) {
           $("#history-section").animate({height: '210px',},"slow");
           $("#history-section").removeClass("expanded");
@@ -630,8 +657,8 @@
           var data = history_queue[i]
           var card_string = makeHistoryString(data)
           var index = history_queue.length - i
-          console.log(index, data)
-          console.log($($("#history-cards > div")[index - 1]))
+          // console.log(index, data)
+          // console.log($($("#history-cards > div")[index - 1]))
           if($($("#history-cards > div")[index - 1]).length > 0) {
             $($("#history-cards > div")[index - 1]).empty()
             $($("#history-cards > div")[index - 1]).append(card_string)
