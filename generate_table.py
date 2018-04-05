@@ -247,7 +247,7 @@ def generate_table(libraries, metric):
             <th width="400">"""+str(count)+"""</th>"""
             count+=1
 
-        html+= """"
+        html+= """
         </tr>
         </thead>
         <tbody>"""
