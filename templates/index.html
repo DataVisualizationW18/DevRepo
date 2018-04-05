@@ -87,7 +87,7 @@
           </div>
           <div id="history-section" class="cell">
             <label class="header">HISTORY</label>
-            <button type="button" class="button" id="show-more">See More</button>
+            <button type="button" class="button" id="show-more"><i class="fas fa-chevron-up"></i> Show More</button>
             <div id="history-cards">
               <!-- Rough history... will need to be reworked to only show one until expanded -->
               <div id="history-card1" class="history-card primary"></div>
@@ -266,6 +266,20 @@
           if($($("#history-cards > div")[index - 1]).length > 0) {
             $($("#history-cards > div")[index - 1]).empty()
             $($("#history-cards > div")[index - 1]).append(card_string)
+            $($("#history-cards > div")[index - 1]).history_queue_index = i
+            $($("#history-cards > div")[index - 1]).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                // $(this).css("transform", "translateY(-50px)");
+                updateFirstHistory(last_history)
+              }
+            });
           } else {
             $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
             $("#history-card" + index)["0"].history_queue_index = i
@@ -278,6 +292,7 @@
                 condenseHistorySection()
                 history_queue.splice(i, 1);
                 history_queue.push(last_history);
+                // $(this).css("transform", "translateY(-50px)");
                 updateFirstHistory(last_history)
               }
             });
@@ -530,9 +545,9 @@
 
           $("#history-section").animate({height: '100%',},"slow");
           $("#history-section").addClass("expanded");
-          $("#show-more")["0"].textContent = "Show Less";
-        }
-        else {
+          $("#show-more").empty()
+          $("#show-more").append("<i class=\"fas fa-chevron-down\"></i> Show Less")
+        } else {
           condenseHistorySection()
         }
       });
@@ -540,7 +555,8 @@
       var condenseHistorySection = function() {
         $("#history-section").animate({height: '210px',},"slow");
         $("#history-section").removeClass("expanded");
-        $("#show-more")["0"].textContent = "Show More";
+        $("#show-more").empty()
+        $("#show-more").append("<i class=\"fas fa-chevron-up\"></i> Show More")
 
         // fade out and remove previous history cards
         var to_delete = history_queue.length - 1
