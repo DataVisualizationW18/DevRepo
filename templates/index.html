@@ -283,8 +283,6 @@
            $("#chart" + index + " > div").css({"display": "inline-block"});
            $("#chart" + index + " > embed").css({"display": "none"});
            // THIS IS WHERE WE WILL PUT THE TABLE
-           console.log(data.data)
-           console.log($("#chart" + index + " > div"))
            $("#chart" + index + " > div").empty()
            $("#chart" + index + " > div").append(data.data);
          }
@@ -802,39 +800,71 @@
         $("#show-more").append("<i class=\"fas fa-chevron-up\"></i> Show More");
       }
 
-      var addCardsFromQueue = function() {
-        for(var i = history_queue.length - 2; i >= 0; --i) {
-          var data = history_queue[i]
-          var index = history_queue.length - i
-          addNewHistoryCard(data, index, i)
-        }
-      }
-
       var showLatestHistoryData = function() {
         showHistoryData(0, history_queue.length - 1);
       }
 
       var showHistoryData = function(index, history_queue_index) {
+        console.log(index, history_queue_index)
         var data = history_queue[history_queue_index]
         var card_string = makeHistoryString(data)
         if($($("#history-cards > div")[index]).length > 0) {
           $($("#history-cards > div")[index]).empty()
           $($("#history-cards > div")[index]).append(card_string)
+          $($("#history-cards > div")[index]).on("click", function() {
+            var data = getData();
+            var i = $(this).prop("history_queue_index")
+            var last_history = history_queue[i]
+            if(!_.isEqual(last_history, data)) {
+              resetNavPanel(last_history)
+              collapseHistorySection()
+              removeCardsFromQueue();
+              history_queue.splice(i, 1);
+              history_queue.push(last_history);
+              showLatestHistoryData()
+              generateCharts(last_history)
+            }
+          });
         } else {
           addNewHistoryCard(data, index, history_queue_index)
         }
       }
 
       var showAllHistoryData = function() {
+        console.log("SHOW ALL HISTORY DATA")
         for(var i = history_queue.length - 1; i >= 0; --i) {
           showHistoryData(i, history_queue.length - i - 1);
         }
       }
 
       var addNewHistoryCard = function(data, index, history_queue_index) {
+        console.log(data, index, history_queue_index)
         var card_string = makeHistoryString(data)
         $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
         $("#history-card" + index).prop("history_queue_index", history_queue_index)
+        console.log($("#history-card" + index))
+        $("#history-card" + index).on("click", function() {
+          var data = getData();
+          var i = $(this).prop("history_queue_index")
+          var last_history = history_queue[i]
+          if(!_.isEqual(last_history, data)) {
+            resetNavPanel(last_history)
+            collapseHistorySection()
+            removeCardsFromQueue();
+            history_queue.splice(i, 1);
+            history_queue.push(last_history);
+            showLatestHistoryData()
+            generateCharts(last_history)
+          }
+        });
+      }
+
+      var addCardsFromQueue = function() {
+        for(var i = history_queue.length - 2; i >= 0; --i) {
+          var data = history_queue[i]
+          var index = history_queue.length - i
+          addNewHistoryCard(data, index, i)
+        }
       }
 
       var removeCardsFromQueue = function() {
