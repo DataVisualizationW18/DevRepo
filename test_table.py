@@ -3,6 +3,6 @@ from generate_table import generate_table
 
 parsed_domains = getRawData()
 
-html = generate_table(parsed_domains[1].libraries, 'issue closing time')
+html = generate_table(parsed_domains[1].libraries, 'backwards compatibility')
 
 print(html)

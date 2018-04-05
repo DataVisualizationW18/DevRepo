@@ -224,8 +224,45 @@ def generate_table(libraries, metric):
 
     # also trouble
     elif metric == 'backwards compatibility':
-        #for library in libraries:
-        pass
+
+        html ="""
+            <table class="hover"> 
+            <thead>
+                <tr>
+                    <th width="150">Library / Release Number</th>"""
+
+        max_release = 0
+        for library in libraries:
+            if len(library.backward_compatibilty) > max_release:
+                max_release = len(library.backward_compatibilty)
+        
+        count = 1
+        while count <= max_release:
+            html+= """
+            <th width="150">"""+str(count)+"""</th>"""
+            count+=1
+
+        html+= """"
+        </tr>"""
+
+        for library in libraries:
+            row = """
+                    <tr>
+                        <td>""" + library.name + """</td>"""
+            for b in library.backward_compatibilty:
+                row += """
+                        <td width = 40>""" + str(b) + """</td>"""
+
+            row+="""
+                </tr>"""
+
+            html+=row
+        
+        
+        html +="""
+            </tbody>
+        </table>"""     
+
     #this one is trouble
     elif metric == 'release frequency':
         pass
