@@ -226,6 +226,7 @@ def handle_data():
 
 @app.route('/generate_one_chart', methods=['POST'])
 def handle_one_data():
+    global parsed_domains
     chart_types = {
         "popularity" : [
             "bar_raw",
@@ -265,21 +266,35 @@ def handle_one_data():
         ]
     }
 
-    invisBackground_style = Style(background='transparent')
+    metric_dict = request.json
+    print(metric_dict)
+    metric = metric_dict['metrics']
 
-    line_chart = pygal.Bar(style = invisBackground_style, width=600)
-    line_chart.title = 'Browser usage evolution (in %)'
-    line_chart.x_labels = map(str, range(2002, 2013))
-    line_chart.add('Firefox', [None, None, 0, 16.6, 25, 31, 36.4, 45.5, 46.3, 42.8, 37.1])
-    line_chart.add('IE',      [85.8, 84.6, 84.7, 74.5, 66, 58.6, 54.7, 44.8, 36.2, 26.6, 20.1])
-    line_chart.add('Others',  [14.2, 15.4, 15.3, 8.9, 9, 10.4, 8.9, 5.8, 6.7, 6.8, 7.5])
-    chart = line_chart.render_data_uri()
+    lib_list=[]
+    for domain in parsed_domains:
+        if domain.name == metric_dict['domain']:
+            for library in domain.libraries:
+                if library.name in metric_dict['libraries']:
+                    lib_list.append(library)
+
+    # generate_table(libraries, metric):
+    if metric['chart_type'] == 'raw_data':
+        chart = generate_table(lib_list, metric['metric'])
+        vis_type = 'raw_data'
+    else:
+        chart = generate(lib_list, metric['metric'], metric['chart_type'])
+        vis_type = 'chart'
+
+    def_chart= metric['chart_type']
+    if def_chart == 'default':
+        def_chart = default_dict[metric['metric']]
+
+    chart_dict = {'metric':metric['metric'],
+        'type':vis_type,
+        'data': chart.render_data_uri(),
+        'chart_type': def_chart
+        }
 
     print(request.json)
 
-    return jsonify({
-        "metric": "popularity",
-        "type": "chart",
-        "data": chart,
-        "chart_type": "bar_raw"
-    })
+    return jsonify(chart_dict)
