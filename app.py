@@ -50,7 +50,10 @@ def handle_data():
     }
 
     print(request.json)
-
+    dict = request.json
+    # for metric in dict: 
+    #if metric.type = table do x
+    #else generate_chart()
     invisBackground_style = Style(background='transparent')
 
     line_chart = pygal.Bar(style = invisBackground_style, width=600)
