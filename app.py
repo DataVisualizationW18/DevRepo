@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world(name=None):
-    parsed_domains = getRawData()
+    #parsed_domains = getRawData()
 
     domain_list = {
         "": [],
@@ -24,9 +24,50 @@ def hello_world(name=None):
     }
 
     chart_types = {
-        "release_frequency" : [
-            "bar_chart_with_raw_numbers",
-            "bar_chart_with_average"
+        "popularity" : [
+            "bar_raw",
+            "pie",
+            "gauge",
+            "raw_data"
+        ],
+        "release-frequency" : [
+            "bar_avg",
+            "box",
+            "raw_data"
+        ],
+        "last-modification-date" : [
+            "bar_days",
+            "raw_data"
+        ],
+        "performance" : [
+            "gauge",
+            "box",
+            "raw_data"
+        ],
+        "security" : [
+            "gauge",
+            "box",
+            "raw_data"
+        ],
+        "issue-response-time" : [
+            "xy",
+            "box",
+            "raw_data"
+        ],
+        "issue-closing-time" : [
+            "xy",
+            "box",
+            "raw_data"
+        ],
+        "backwards-compatibility" : [
+            "bar",
+            "line",
+            "raw_data"
+        ],
+        "last-discussed-on-so" : [
+            "box",
+            "scatter",
+            "raw_data"
         ]
     }
 
@@ -35,18 +76,43 @@ def hello_world(name=None):
 
 @app.route('/generate_chart', methods=['POST'])
 def handle_data():
-    domain_list = {
-        "": [],
-        "cryptography": ["bouncycastle","commons crypto","conceal","chimera","spongycastle","keyczar","conscrypt"],
-        "databases": ["h2","derby"],
-        "json": ["gson","json.simple"],
-        "logging": ["slf4j","log4j2","logback","commons logging","tinylog","blitz4j","minlog"],
-        "mocking": ["mockito","easymock","powermock","jmock"],
-        "object-relational-mapping": ["hibernate orm","mybatis3","ormlite"],
-        "security": ["shiro","spring security"],
-        "testing": ["junit4","testng"],
-        "utilities": ["guava","commons lang"],
-        "xml": ["xerces2-j","dom4j","jdom"]
+    chart_types = {
+        "popularity" : [
+            "bar_raw",
+            "pie",
+            "gauge"
+        ],
+        "release-frequency" : [
+            "bar_avg",
+            "box"
+        ],
+        "last-modification-date" : [
+            "bar_days"
+        ],
+        "performance" : [
+            "gauge",
+            "box"
+        ],
+        "security" : [
+            "gauge",
+            "box"
+        ],
+        "issue-response-time" : [
+            "xy",
+            "box"
+        ],
+        "issue-closing-time" : [
+            "xy",
+            "box"
+        ],
+        "backwards-compatibility" : [
+            "bar",
+            "line"
+        ],
+        "last-discussed-on-so" : [
+            "box",
+            "scatter"
+        ]
     }
 
     print(request.json)
@@ -76,20 +142,28 @@ def handle_data():
 
     charts = []
     charts.append({
+        "metric": "popularity",
         "type": "chart",
-        "data": chart
+        "data": chart,
+        "chart_type": "bar_raw"
     });
     charts.append({
+        "metric": "performance",
         "type": "chart",
-        "data": chart
+        "data": chart,
+        "chart_type": "box"
     });
     charts.append({
+        "metric": "issue-closing-time",
         "type": "chart",
-        "data": chart2
+        "data": chart2,
+        "chart_type": "xy"
     });
-    # charts.append({
-    #     "type": "raw_data",
-    #     "data": ""
-    # });
+    charts.append({
+        "metric": "security",
+        "type": "raw_data",
+        "data": "",
+        "chart_type": "raw_data"
+    });
 
     return jsonify(charts)

@@ -87,10 +87,10 @@
           </div>
           <div id="history-section" class="cell">
             <label class="header">HISTORY</label>
-            <button type="button" class="button" id="show-more">See More</button>
+            <button type="button" class="button" id="show-more"><i class="fas fa-chevron-up"></i> Show More</button>
             <div id="history-cards">
               <!-- Rough history... will need to be reworked to only show one until expanded -->
-              <div style="background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;">EMPTY</div>
+              <div id="history-card1" class="history-card primary"></div>
               <!-- <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
               <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
               <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div> -->
@@ -106,134 +106,319 @@
         <div id="visualizations" class="flex-grid-wrapper">
           <div class="flex-grid">
             <div id="viz1" class="visualization">
-              <embed id="chart1" type="image/svg+xml" src="" />
+              <div id="chart1" class="chart">
+                <embed type="image/svg+xml" src="" />
+                <div class="raw-table"></div>
+              </div>
+              <div id="viz1-options" class="option-menu" style="display: none;">
+                <div id="viz1-options-button-group" class="options-button-group button-group">
+                </div>
+                <div class="option-menu-button-group button-group">
+                  <a id="viz1-apply" class="button">APPLY CHANGES</a>
+                  <a id="viz1-cancel" class="button">CANCEL</a>
+                </div>
+              </div>
+              <a id="viz1-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
             <div id="viz2" class="visualization">
-              <embed id="chart2" type="image/svg+xml" src="" />
+              <div id="chart2" class="chart">
+                <embed type="image/svg+xml" src="" />
+                <div class="raw-table"></div>
+              </div>
+              <div id="viz2-options" class="option-menu" style="display: none;">
+                <div id="viz2-options-button-group" class="options-button-group button-group">
+                </div>
+                <div class="option-menu-button-group button-group">
+                  <a id="viz2-apply" class="button">APPLY CHANGES</a>
+                  <a id="viz2-cancel" class="button">CANCEL</a>
+                </div>
+              </div>
+              <a id="viz2-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
             <div id="viz3" class="visualization">
-              <embed id="chart3" type="image/svg+xml" src="" />
+              <div id="chart3" class="chart">
+                <embed type="image/svg+xml" src="" />
+                <div class="raw-table"></div>
+              </div>
+              <div id="viz3-options" class="option-menu" style="display: none;">
+                <div id="viz3-options-button-group" class="options-button-group button-group">
+                </div>
+                <div class="option-menu-button-group button-group">
+                  <a id="viz3-apply" class="button">APPLY CHANGES</a>
+                  <a id="viz3-cancel" class="button">CANCEL</a>
+                </div>
+              </div>
+              <a id="viz3-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
             <div id="viz4" class="visualization">
-              <embed id="chart4" type="image/svg+xml" src="" />
+              <div id="chart4" class="chart">
+                <embed type="image/svg+xml" src="" />
+                <div class="raw-table"></div>
+              </div>
+              <div id="viz4-options" class="option-menu" style="display: none;">
+                <div id="viz4-options-button-group" class="options-button-group button-group">
+                </div>
+                <div class="option-menu-button-group button-group">
+                  <a id="viz4-apply" class="button">APPLY CHANGES</a>
+                  <a id="viz4-cancel" class="button">CANCEL</a>
+                </div>
+              </div>
+              <a id="viz4-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
-          </div>
-        </div>
-
-        <div class="option-menu" style="display: none;">
-          <div id="viz-options-button-wrapper">
-            <div id="viz-options-button-group" class="button-group">
-              <a class="button">1</a>
-              <a class="button">2</a>
-              <a class="button">3</a>
-              <a class="button">4</a>
-            </div>
-          </div>
-          <div id="option-menu-button-group" class="button-group">
-            <a class="button">APPLY CHANGES</a>
-            <a class="button">CANCEL</a>
           </div>
         </div>
       </div>
     </div>
-    <div id="result"></div>
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
     <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/underscore-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fontawesome-all.min.js') }}"></script>
 
     <script>
       $(document).foundation();
 
       var history_queue = []
 
-      // $("#cancel-button").click(function() {
-      //   var data = {}
-      //   var selected_domain = $("#domain :selected")
-      //   var selected_libraries = $("#libraries :checked")
-      //   var selected_metrics = $("#metrics :selected")
-      //
-      //   data.domain = selected_domain["0"].textContent
-      //   data.libraries = []
-      //   for(var i = 0; i < selected_libraries.length; ++i) {
-      //     data.libraries.push(selected_libraries[i].id)
-      //   }
-      //   data.metrics = []
-      //   for(var i = 0; i < selected_metrics.length; ++i) {
-      //     if(selected_metrics[i].textContent != "None") {
-      //       data.metrics.push(selected_metrics[i].textContent)
-      //     }
-      //   }
-      //
-      //   if(!_.isEqual(history_queue[history_queue.length - 1], data)) {
-      //
-      //   }
-      // });
+      var getData = function () {
+        var data = {}
 
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
+        }
+        data.metrics = []
+        for(var i = 0; i < selected_metrics.length; ++i) {
+          if(selected_metrics[i].value != "") {
+            data.metrics.push({
+              "metric": selected_metrics[i].value,
+              "chart_type": "default"
+            });
+          }
+        }
+
+        return data;
+      }
+
+      var updateFirstHistory = function(data) {
+        var card_string = "<p>Domain: " + data.domain + "</p>" +
+                          "<p>Libraries: "
+        for(var i = 0; i < data.libraries.length; ++i) {
+          card_string += data.libraries[i]
+          if(i < data.libraries.length - 1) {
+            card_string += ", "
+          }
+        }
+        card_string += "</p><p>Metrics: "
+        for(var i = 0; i < data.metrics.length; ++i) {
+          card_string += data.metrics[i].metric + " (" + data.metrics[i].chart_type + ")"
+          if(i < data.metrics.length - 1) {
+            card_string += ", "
+          }
+        }
+        card_string += "</p>"
+        $("#history-cards > div").first().empty()
+        $("#history-cards > div").first().append(card_string)
+      }
+
+      var updateAllHistory = function() {
+        for(var i = 0; i < history_queue.length; ++i) {
+          var data = history_queue[i]
+          var card_string = "<p>Domain: " + data.domain + "</p>" +
+                            "<p>Libraries: "
+          for(var j = 0; j < data.libraries.length; ++j) {
+            card_string += data.libraries[j]
+            if(i < data.libraries.length - 1) {
+              card_string += ", "
+            }
+          }
+          card_string += "</p><p>Metrics: "
+          for(var j = 0; j < data.metrics.length; ++j) {
+            card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
+            if(i < data.metrics.length - 1) {
+              card_string += ", "
+            }
+          }
+          card_string += "</p>"
+          var index = history_queue.length - i
+          console.log(index, data)
+          console.log($($("#history-cards > div")[index - 1]))
+          if($($("#history-cards > div")[index - 1]).length > 0) {
+            $($("#history-cards > div")[index - 1]).empty()
+            $($("#history-cards > div")[index - 1]).append(card_string)
+            $($("#history-cards > div")[index - 1]).history_queue_index = i
+            $($("#history-cards > div")[index - 1]).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                // $(this).css("transform", "translateY(-50px)");
+                updateFirstHistory(last_history)
+              }
+            });
+          } else {
+            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            $("#history-card" + index)["0"].history_queue_index = i
+            $("#history-card" + index).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                // $(this).css("transform", "translateY(-50px)");
+                updateFirstHistory(last_history)
+              }
+            });
+          }
+        }
+      }
+
+      var appendToHistory = function(data) {
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+      }
+
+      var updateHistory = function(data) {
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          updateFirstHistory(data)
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+      }
+
+      $("#history-card1").on("click", function() {
+        var data = getData();
+        var last_history = history_queue[history_queue.length - 1]
+        if(!_.isEqual(last_history, data)) {
+          resetNavPanel(last_history)
+        }
+        condenseHistorySection()
+      });
+
+      var resetNavPanel = function(last_history) {
+        // change domain back
+        if(last_history) {
+          $("#domain > label > select").val(last_history.domain).change();
+        } else {
+          $("#domain > label > select").val("").change();
+        }
+
+        // change libraries back
+        if(last_history) {
+          var libraries = []
+          $("#libraries > label > div > input").each(function(i) {
+            if(!_.isEqual($(this)["0"].id, "select_all")) {
+              libraries.push($(this)["0"].id);
+            }
+          });
+          if(!_.isEqual(libraries, last_history.libraries)) {
+            $("#libraries > label > div > input").prop("checked", false);
+          }
+          for(var i = 0; i < last_history.libraries.length; ++i) {
+            $("#" + last_history.libraries[i]).prop("checked", true);
+          }
+        } else {
+          $("#libraries").empty()
+        }
+
+        $("#metrics > select").each(function(i) {
+          if(!last_history || i >= last_history.metrics.length) {
+            $(this).val("").change()
+          } else {
+            $(this).val(last_history.metrics[i].metric).change()
+          }
+        });
+      }
+
+      $("#cancel-button").click(function() {
+        var data = getData();
+
+        var last_history = history_queue[history_queue.length - 1]
+        if(!_.isEqual(last_history, data)) {
+          resetNavPanel(last_history)
+        }
+      });
+
+      var generateCharts = function(data) {
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          $("#empty-screen").css({"display":"none"});
+          $("#visualizations").css({"display":"inline-block"});
+          for(var i = 1; i < data.length + 1; ++i) {
+            // console.log(data[i - 1])
+            if(_.isEqual(data[i - 1].type, "chart")) {
+              $("#chart" + i + " > embed").prop("src", data[i - 1].data);
+              $("#chart" + i + " > embed").css({"display": "inline-block"});
+              $("#chart" + i + " > div").css({"display": "none"});
+            } else if (_.isEqual(data[i - 1].type, "raw_data")) {
+              $("#chart" + i + " > div").css({"display": "inline-block"});
+              $("#chart" + i + " > embed").css({"display": "none"});
+              // THIS IS WHERE WE WILL PUT THE TABLE
+            }
+            $("#chart" + i).css({"display":"inline-block"});
+            $("#chart" + i).prop("metric", data[i - 1].metric);
+            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
+      }
 
       $("#save-button").click(function() {
         if(!$(this).attr('disabled')) {
           // set dictionary of current settings
-          var data = {}
-          var selected_domain = $("#domain :selected")
-          var selected_libraries = $("#libraries :checked")
-          var selected_metrics = $("#metrics :selected")
-
-          data.domain = selected_domain["0"].textContent
-          data.libraries = []
-          for(var i = 0; i < selected_libraries.length; ++i) {
-            if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-              data.libraries.push(selected_libraries[i].id);
-            }
-          }
-          data.metrics = []
-          for(var i = 0; i < selected_metrics.length; ++i) {
-            if(selected_metrics[i].textContent != "None") {
-              data.metrics.push({
-                "metric": selected_metrics[i].textContent,
-                "chart_type": "default"
-              });
-            }
-          }
+          var data = getData();
 
           // update history
-          if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-            history_queue.push(data);
-            $("#history-cards > div").first().text(JSON.stringify(data))
-          }
-          if(history_queue.length > 4) {
-            history_queue.splice(0, 1);
-          }
+          updateHistory(data)
 
           // generate charts
-          // TYLER THIS IS THE PLACE
-          $.ajax({
-           type: "POST",
-           contentType: 'application/json',
-           url: "/generate_chart",
-           data: JSON.stringify(data),
-           dataType: 'json'
-          }).done(function(data)  {
-            $("#empty-screen").css({"display":"none"});
-            $("#visualizations").css({"display":"inline-block"});
-            for(var i = 1; i < data.length + 1; ++i) {
-              $("#chart" + i).prop("src", data[i - 1].data);
-              $("#chart" + i).css({"display":"inline-block"});
-            }
-            for(var i = data.length + 1; i <= 4; ++i) {
-              $("#viz" + i).css({"display":"none"});
-            }
-
-            // IF DATA[index].type is raw_data DO THIS
-            // $("#viz1").empty();
-            // $("#viz1").append(data[0].data);
-          }).fail(function(xhr, status, error) {
-            console.log(error);
-          });
+          generateCharts(data)
         }
       });
 
+      // on domain change show correct libraries and disable save if needed
       $('#domain').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = $("option:selected")["0"].value;
@@ -273,7 +458,7 @@
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
         for(var i = 0; i < metrics.length; ++i) {
-          if(metrics[i].innerText != "None") {
+          if(metrics[i].value != "") {
             selected_metrics.push(metrics[i]);
           }
         }
@@ -284,12 +469,13 @@
         }
       });
 
+      // on library change disable save if needed
       $("#libraries").on('change', function(e) {
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
         for(var i = 0; i < metrics.length; ++i) {
-          if(metrics[i].innerText != "None") {
+          if(metrics[i].value != "") {
             selected_metrics.push(metrics[i]);
           }
         }
@@ -300,12 +486,13 @@
         }
       });
 
+      // on metric change disable save if needed
       $("#metrics").on('change', function(e) {
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
         for(var i = 0; i < metrics.length; ++i) {
-          if(metrics[i].innerText != "None") {
+          if(metrics[i].value != "") {
             selected_metrics.push(metrics[i]);
           }
         }
@@ -316,30 +503,250 @@
         }
       });
 
+
+      // on show more, display history cards in expandable window
       $("#show-more").click(function() {
         if (!$("#history-section").hasClass("expanded")){
           // fade in previous history cards
           for(var i = history_queue.length - 2; i >= 0; --i) {
-            $("<div style=\"background-color:aqua; height: calc(100vh * (1/5)); margin: 10px;\">" + JSON.stringify(history_queue[i]) + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            var data = history_queue[i]
+            var card_string = "<p>Domain: " + data.domain + "</p>" +
+                              "<p>Libraries: "
+            for(var j = 0; j < data.libraries.length; ++j) {
+              card_string += data.libraries[j]
+              if(i < data.libraries.length - 1) {
+                card_string += ", "
+              }
+            }
+            card_string += "</p><p>Metrics: "
+            for(var j = 0; j < data.metrics.length; ++j) {
+              card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
+              if(j < data.metrics.length - 1) {
+                card_string += ", "
+              }
+            }
+            card_string += "</p>"
+            var index = history_queue.length - i
+            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            $("#history-card" + index)["0"].history_queue_index = i
+            $("#history-card" + index).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                updateFirstHistory(last_history)
+              }
+            });
           }
 
           $("#history-section").animate({height: '100%',},"slow");
           $("#history-section").addClass("expanded");
-          $("#show-more")["0"].textContent = "Show Less";
+          $("#show-more").empty()
+          $("#show-more").append("<i class=\"fas fa-chevron-down\"></i> Show Less")
+        } else {
+          condenseHistorySection()
         }
-        else {
-          $("#history-section").animate({height: '200px',},"slow");
-          $("#history-section").removeClass("expanded");
-          $("#show-more")["0"].textContent = "Show More";
+      });
 
-          // fade out and remove previous history cards
-          var to_delete = history_queue.length - 1
-          if(to_delete > 0) {
-            $("#history-cards > div").slice(-(history_queue.length - 1)).fadeOut(1000, function() {
-              $(this).remove();
-            });
+      var condenseHistorySection = function() {
+        $("#history-section").animate({height: '210px',},"slow");
+        $("#history-section").removeClass("expanded");
+        $("#show-more").empty()
+        $("#show-more").append("<i class=\"fas fa-chevron-up\"></i> Show More")
+
+        // fade out and remove previous history cards
+        var to_delete = history_queue.length - 1
+        if(to_delete > 0) {
+          $("#history-cards > div").slice(-(to_delete)).fadeOut(1000, function() {
+            $(this).remove();
+          });
+        }
+      }
+
+      var showOptions = function(i) {
+        $("#chart" + i).css({"display":"none"});
+        $("#viz" + i + "-options").css({"display":"inline-block"});
+        $("#viz" + i + "-button").css({"display":"none"});
+      }
+
+      var showChartTypes = function(i) {
+        var chart_types = {{ chart_types|tojson }}[$("#chart" + i)["0"].metric]
+        $("#viz" + i + "-options-button-group").empty();
+        for(var j = 0; j < chart_types.length; ++j) {
+          var add_class = ""
+          // console.log(i, $("#chart" + i)["0"].chart_type)
+          if(_.isEqual(chart_types[j], $("#chart" + i)["0"].chart_type)) {
+            add_class = "selected"
+          }
+          $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_types[j] + "\" class=\"button " + add_class + "\">" + chart_types[j] + "</a>")
+          $("#viz" + i + "-" + chart_types[j])["0"].chart_type = chart_types[j];
+          $("#viz" + i + "-" + chart_types[j]).on("click", function(e) {
+            $(this).addClass('selected').siblings().removeClass('selected');
+          });
+        }
+      }
+
+      $("#viz1-button").on("click", function(e) {
+        showOptions(1);
+        showChartTypes(1);
+      });
+
+      $("#viz2-button").on("click", function(e) {
+        showOptions(2);
+        showChartTypes(2);
+      });
+
+      $("#viz3-button").on("click", function(e) {
+        showOptions(3);
+        showChartTypes(3);
+      });
+
+      $("#viz4-button").on("click", function(e) {
+        showOptions(4);
+        showChartTypes(4);
+      });
+
+      var showChart = function(i) {
+        $("#chart" + i).css({"display":"inline-block"});
+        $("#viz" + i + "-options").css({"display":"none"});
+        $("#viz" + i + "-button").css({"display":"inline-block"});
+      }
+
+      var getDataFromChart = function() {
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
           }
         }
+        data.metrics = []
+        if($("#chart1")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart1")["0"].metric,
+            "chart_type": $("#chart1")["0"].chart_type
+          });
+        }
+        if($("#chart2")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart2")["0"].metric,
+            "chart_type": $("#chart2")["0"].chart_type
+          });
+        }
+        if($("#chart3")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart3")["0"].metric,
+            "chart_type": $("#chart3")["0"].chart_type
+          });
+        }
+        if($("#chart4")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart4")["0"].metric,
+            "chart_type": $("#chart4")["0"].chart_type
+          });
+        }
+        return data;
+      }
+
+      $("#viz1-apply").on("click", function(e) {
+        showChart(1);
+        $("#chart1").prop("chart_type", $("#viz1-options-button-group").find(".selected")["0"].chart_type)
+
+        // console.log($("#viz1-options-button-group").find(".selected")["0"].chart_type)
+        // console.log($("#chart1")["0"].chart_type)
+        // console.log($("#chart1")["0"].chart_type == $("#viz1-options-button-group").find(".selected")["0"].chart_type)
+        // set dictionary of current settings
+        var data = getDataFromChart();
+
+        // update history
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
+
+        generateCharts(data)
+        // console.log($("#chart1"))
+      });
+
+      $("#viz2-apply").on("click", function(e) {
+        showChart(2);
+        $("#chart2")["0"].chart_type = $("#viz2-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = getDataFromChart();
+
+        // update history
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
+
+        generateCharts(data)
+      });
+
+      $("#viz3-apply").on("click", function(e) {
+        showChart(3);
+        $("#chart3")["0"].chart_type = $("#viz3-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = getDataFromChart();
+
+        // update history
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
+
+        generateCharts(data)
+      });
+
+      $("#viz4-apply").on("click", function(e) {
+        showChart(4);
+        $("#chart4")["0"].chart_type = $("#viz4-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = getDataFromChart();
+
+        // update history
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
+
+        generateCharts(data)
+      });
+
+      $("#viz1-cancel").on("click", function(e) {
+        showChart(1);
+      });
+
+      $("#viz2-cancel").on("click", function(e) {
+        showChart(2);
+      });
+
+      $("#viz3-cancel").on("click", function(e) {
+        showChart(3);
+      });
+
+      $("#viz4-cancel").on("click", function(e) {
+        showChart(4);
       });
     </script>
   </body>
