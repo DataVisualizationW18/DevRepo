@@ -324,8 +324,8 @@
         var last_history = history_queue[history_queue.length - 1]
         if(!_.isEqual(last_history, data)) {
           resetNavPanel(last_history)
+          condenseHistorySection()
         }
-        condenseHistorySection()
       });
 
       var resetNavPanel = function(last_history) {
