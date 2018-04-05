@@ -805,9 +805,12 @@
       }
 
       var showHistoryData = function(index, history_queue_index) {
+        console.log("SHOW HISTORY DATA")
         console.log(index, history_queue_index)
+        console.log(history_queue)
         var data = history_queue[history_queue_index]
         var card_string = makeHistoryString(data)
+        console.log($($("#history-cards > div")[index]).length > 0)
         if($($("#history-cards > div")[index]).length > 0) {
           $($("#history-cards > div")[index]).empty()
           $($("#history-cards > div")[index]).append(card_string)
@@ -826,7 +829,7 @@
             }
           });
         } else {
-          addNewHistoryCard(data, index, history_queue_index)
+          addNewHistoryCard(data, index + 1, history_queue_index)
         }
       }
 
