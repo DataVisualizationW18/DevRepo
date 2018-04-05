@@ -359,7 +359,7 @@
       $('#domain').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = $("option:selected")["0"].value;
-        var library_list = {{ domain_list|tojson }}[valueSelected];
+        var library_list = {{ domain_dict|tojson }}[valueSelected].sort();
 
         // empty #libraries and append all library checkboxes
         $("#libraries").empty()
