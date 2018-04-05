@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world(name=None):
-    parsed_domains = getRawData()
+    #parsed_domains = getRawData()
 
     domain_list = {
         "": [],

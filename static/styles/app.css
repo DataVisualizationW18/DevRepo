@@ -91,49 +91,94 @@
 .flex-grid-wrapper {
     height:100%;
     width:100%;
-    margin-top: 5px;
 }
 
 .flex-grid {
     display: flex;
     font-size: 0;
     flex-wrap: wrap;
-    margin:-10px 0 0 -10px;
+    margin:-5px 0 0 -5px;
     height: 100%;
 }
 
-.flex-grid div:only-child {
+.visualization:only-child {
   height: calc(100% - 10px);
   width: calc(100% - 10px - 1px);
 }
 
-.flex-grid div:first-child:nth-last-child(2),
-.flex-grid div:first-child:nth-last-child(2) ~ div {
+.visualization:first-child:nth-last-child(2),
+.visualization:first-child:nth-last-child(2) ~ div {
   height: calc(100% * (1/2) - 10px);
   width: calc(100% - 10px - 1px);
 }
 
-.flex-grid div:first-child:nth-last-child(3),
-.flex-grid div:first-child:nth-last-child(3) ~ div {
+.visualization:first-child:nth-last-child(3),
+.visualization:first-child:nth-last-child(3) ~ div {
   height: calc(100% * (1/2) - 10px);
   width: calc(100% * (1/2) - 10px - 1px);
 }
 
-.flex-grid div:first-child:nth-last-child(4),
-.flex-grid div:first-child:nth-last-child(4) ~ div {
+.visualization:first-child:nth-last-child(4),
+.visualization:first-child:nth-last-child(4) ~ div {
   height: calc(100% * (1/2) - 10px);
   width: calc(100% * (1/2) - 10px - 1px);
 }
 
-.flex-grid a, .flex-grid div {
+.visualization {
     display: inline-block;
     margin:10px 0 0 10px;
     flex-grow: 1;
-    /* height: calc(100% * (1/2) - 10px);
-    width: calc(100% * (1/2) - 10px - 1px); */
+    position: relative;
 }
 
-.flex-grid div embed {
+#viz1-button, #viz2-button, #viz3-button, #viz4-button {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-left: -0.1px;
+  margin-bottom: -0.1px;
+}
+
+.options-button-group {
+  display: block;
+  height: 100%;
+  margin-top: 10px;
+  margin-left: 15px;
+}
+
+.options-button-group .button {
+  width: calc(100% * (1/2) - 10px);
+  height: calc(100% * (1/2) - 50px);
+  margin: 5px 10px 5px 0px;
+}
+
+.option-menu-button-group {
+  bottom: 0;
+  position: absolute;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: -0.1px;
+}
+
+.option-menu-button-group .button {
+  width: calc(100% * (1/2) - 9px);
+  margin: 5px;
+}
+
+.visualization a span {
+  max-width: 0rem;
+  -webkit-transition: max-width 1s;
+  transition: max-width 1s;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.visualization a:hover span {
+  max-width: 12rem;
+}
+
+.visualization embed, .visualization .option-menu {
   height: 100%;
   width: 100%;
   border: 1px solid var(--dark-color);

@@ -7,6 +7,7 @@
     <title>Data Visualization Tool</title>
     <link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='styles/foundation.css') }}" />
     <link rel="stylesheet" type= "text/css" href="{{ url_for('static', filename='styles/app.css') }}" />
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
   </head>
   <body>
     <div id="full-page" class="grid-x grid-margin-x">
@@ -99,44 +100,56 @@
         </div>
       </div>
       <div class="cell auto">
-        <div id="empty-screen">
+        <div id="empty-screen" style="display:none;">
           <h1>WELCOME TO OUR DATA VIZ APP</h1>
           <p>Steps or something like that will go here</p>
         </div>
-        <div id="visualizations" class="flex-grid-wrapper">
+        <div id="visualizations" class="flex-grid-wrapper" style="display:inline-block;">
           <div class="flex-grid">
             <div id="viz1" class="visualization">
-              <embed id="chart1" type="image/svg+xml" src="" />
+              <!-- <embed id="chart1" type="image/svg+xml" src="" /> -->
+              <div id="viz1-options" class="option-menu">
+                <div id="viz1-options-button-group" class="options-button-group button-group">
+                  <a class="button">1</a>
+                  <a class="button">2</a>
+                  <a class="button">3</a>
+                  <a class="button">4</a>
+                </div>
+                <div class="option-menu-button-group button-group">
+                  <a class="button">APPLY CHANGES</a>
+                  <a class="button">CANCEL</a>
+                </div>
+              </div>
+              <a id="viz1-button" class="button" style="display:none;">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
             <div id="viz2" class="visualization">
               <embed id="chart2" type="image/svg+xml" src="" />
+              <a id="viz2-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
             <div id="viz3" class="visualization">
               <embed id="chart3" type="image/svg+xml" src="" />
+              <a id="viz3-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
             <div id="viz4" class="visualization">
               <embed id="chart4" type="image/svg+xml" src="" />
+              <a id="viz4-button" class="button">
+                <i class="fas fa-th-large"></i>
+                <span>CHANGE VISUALIZATION</span>
+              </a>
             </div>
-          </div>
-        </div>
-
-        <div class="option-menu" style="display: none;">
-          <div id="viz-options-button-wrapper">
-            <div id="viz-options-button-group" class="button-group">
-              <a class="button">1</a>
-              <a class="button">2</a>
-              <a class="button">3</a>
-              <a class="button">4</a>
-            </div>
-          </div>
-          <div id="option-menu-button-group" class="button-group">
-            <a class="button">APPLY CHANGES</a>
-            <a class="button">CANCEL</a>
           </div>
         </div>
       </div>
     </div>
-    <div id="result"></div>
 
     <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
     <script src="{{ url_for('static', filename='js/what-input.js') }}"></script>
@@ -258,6 +271,10 @@
             console.log(error);
           });
         }
+      });
+
+      $("#viz1_button").on("click", function(e) {
+
       });
 
       $('#domain').on('change', function (e) {
