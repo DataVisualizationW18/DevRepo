@@ -261,8 +261,8 @@
           }
           card_string += "</p>"
           var index = history_queue.length - i
-          // console.log(index, data)
-          // console.log($($("#history-cards > div")[index - 1]))
+          console.log(index, data)
+          console.log($($("#history-cards > div")[index - 1]))
           if($($("#history-cards > div")[index - 1]).length > 0) {
             $($("#history-cards > div")[index - 1]).empty()
             $($("#history-cards > div")[index - 1]).append(card_string)
@@ -652,8 +652,12 @@
         var data = getDataFromChart();
 
         // update history
-        appendToHistory(data)
-        updateAllHistory()
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
 
         generateCharts(data)
         // console.log($("#chart1"))
@@ -667,8 +671,12 @@
         var data = getDataFromChart();
 
         // update history
-        appendToHistory(data)
-        updateAllHistory()
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
 
         generateCharts(data)
       });
@@ -681,8 +689,12 @@
         var data = getDataFromChart();
 
         // update history
-        appendToHistory(data)
-        updateAllHistory()
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
 
         generateCharts(data)
       });
@@ -695,8 +707,12 @@
         var data = getDataFromChart();
 
         // update history
-        appendToHistory(data)
-        updateAllHistory()
+        if($("#history-section").hasClass("expanded")) {
+          appendToHistory(data)
+          updateAllHistory()
+        } else {
+          updateHistory(data)
+        }
 
         generateCharts(data)
       });
