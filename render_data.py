@@ -1,10 +1,13 @@
 import pygal
 from datetime import datetime, date
+from pygal.style import Style
+
+invis_style = Style(background = 'transparent')
 
 def generate(libraries, metric, chart_type):
 	# default for chart_type is default chart to be created
 	chart = None
-	if metric == 'Popularity':
+	if metric == 'popularity':
 
 		if chart_type == 'default' or chart_type == 'bar_raw':
 			chart = generate_bar_chart_popularity(libraries)
@@ -13,7 +16,7 @@ def generate(libraries, metric, chart_type):
 		elif chart_type == 'gauge':
 			chart = generate_solid_gauge_chart_popularity(libraries)
 
-	elif metric == 'Release Frequency':
+	elif metric == 'release-frequency':
 
 		if chart_type == 'default' or chart_type == 'bar_avg':
 			chart = generate_bar_chart_release_frequency(libraries)
@@ -22,47 +25,47 @@ def generate(libraries, metric, chart_type):
 		elif chart_type == 'line':
 			chart = generate_line_chart_release_frequency(libraries)
 
-	elif metric == 'Last Modification Date':
+	elif metric == 'last-modification-date':
 
 		if chart_type == 'default' or chart_type == 'bar_days':
 			chart = generate_bar_chart_last_modification(libraries)
 
-	elif metric == 'Performance':
+	elif metric == 'performance':
 
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_performance(libraries)
 		elif chart_type == 'gauge':
 			chart = generate_solid_gauge_chart_popularity(libraries)
 
-	elif metric == 'Security':
+	elif metric == 'security':
 
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_security(libraries)
 		elif chart_type == 'gauge':
 			chart = generate_solid_gauge_chart_security(libraries)
 
-	elif metric == 'Issue Response Time':
+	elif metric == 'issue-response-time':
 
 		if chart_type == 'default' or chart_type == 'xy':
 			chart = generate_xy_chart_issue_response_time(libraries)
 		elif chart_type == 'box':
 			generate_box_chart_issue_response_time(libraries)
 
-	elif metric == 'Issue Closing Time':
+	elif metric == 'issue-closing-time':
 
 		if chart_type == 'default' or chart_type == 'xy':
 			chart = generate_xy_chart_issue_closing_time(libraries)
 		elif chart_type == 'box':
 			chart = generate_box_chart_issue_closing_time(libraries)
 
-	elif metric == 'Backwards Compatability':
+	elif metric == 'backwards-compatibility':
 
 		if chart_type == 'default' or chart_type == 'bar':
 			chart = generate_bar_chart_backwards_compatibility(libraries)
 		elif chart_type == 'line':
 			chart = generate_line_chart_backwards_compatibility(libraries)
 
-	elif metric == 'Last Discussed':
+	elif metric == 'last-discussed-on-so':
 
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_last_discussed(libraries)
@@ -74,21 +77,21 @@ def generate(libraries, metric, chart_type):
 
 # popularity
 def generate_bar_chart_popularity(libraries):
-	bar_chart = pygal.Bar(title = 'Number Of Software Projects Making Use Of The Library' , x_title='', y_title='', x_label_rotation = -45)
+	bar_chart = pygal.Bar(title = 'Number Of Software Projects Making Use Of The Library' , x_title='', y_title='', x_label_rotation = -45, style = invis_style)
 	sorted_libraries = sorted(libraries, key=lambda library: library.popularity, reverse=True)
 	for library in sorted_libraries:
 		bar_chart.add(library.name, library.popularity)
 	return bar_chart
 
 def generate_pie_chart_popularity(libraries):
-	pie_chart = pygal.Pie(title = 'Number Of Software Projects Making Use Of The Library', x_title='', y_title='', x_label_rotation = -45)
+	pie_chart = pygal.Pie(title = 'Number Of Software Projects Making Use Of The Library', x_title='', y_title='', x_label_rotation = -45, style = invis_style)
 	sorted_libraries = sorted(libraries, key=lambda library: library.popularity, reverse=True)
 	for library in sorted_libraries:
 		pie_chart.add(library.name, library.popularity)
 	return pie_chart
 
 def generate_solid_gauge_chart_popularity(libraries):
-	gauge_chart = pygal.SolidGauge(title = 'Number Of Software Projects Making Use Of The Library', x_title='', y_title='', x_label_rotation = -45)
+	gauge_chart = pygal.SolidGauge(title = 'Number Of Software Projects Making Use Of The Library', x_title='', y_title='', x_label_rotation = -45, style = invis_style)
 	sorted_libraries = sorted(libraries, key=lambda library: library.popularity, reverse=True)
 	top_popularity = 0
 	for library in sorted_libraries:
@@ -101,8 +104,8 @@ def generate_solid_gauge_chart_popularity(libraries):
 
 # release frequency
 def generate_bar_chart_release_frequency(libraries):
-	bar_chart = pygal.Bar(title = 'Average Days Between Releases', x_title='', y_title='Days', x_label_rotation = -45)
-	sorted_libraries = sorted(libraries, key=lambda library: library.popularity, reverse=True)
+	bar_chart = pygal.Bar(title = 'Average Days Between Releases', x_title='', y_title='Days', x_label_rotation = -45, style = invis_style)
+	
 	all_release_times = []
 	release_tuples = []
 	for library in libraries:
@@ -126,8 +129,10 @@ def generate_bar_chart_release_frequency(libraries):
 	return bar_chart
 
 def generate_box_chart_release_frequency(libraries):
-	box_chart = pygal.Box(title = 'Days Between Releases', x_title='Total Releases', y_title='Days', x_label_rotation = -45)
+	box_chart = pygal.Box(title = 'Days Between Releases', x_title='Total Releases', y_title='Days', x_label_rotation = -45, style = invis_style)
+	
 	all_release_times = []
+	release_tuples = []
 	for library in libraries:
 		release_times = []
 		for i in range(len(library.release_frequency) - 1):
@@ -137,13 +142,21 @@ def generate_box_chart_release_frequency(libraries):
 			time_to_release = time_to_release_all.days
 			release_times.append(time_to_release)
 
-		box_chart.add(library.name, release_times)
-		all_release_times.append(library.name + ': ' + str(len(release_times)))
+		avg_release_time = sum(release_times)/len(release_times)
+		release_tuples.append((release_times, avg_release_time, len(release_times), library.name))
+		# box_chart.add(library.name, release_times)
+		# all_release_times.append(library.name + ': ' + str(len(release_times)))
+
+	sorted_release_tuples = sorted(release_tuples, key=lambda release: release[1], reverse=False)
+	for release_tuple in sorted_release_tuples:
+		box_chart.add(release_tuple[3], release_tuple[0])
+		all_release_times.append(release_tuple[3] + ': ' + str(release_tuple[2]))
+
 	box_chart.x_labels = all_release_times
 	return box_chart
 
 def generate_line_chart_release_frequency(libraries):
-	line_chart = pygal.Line(title = 'Average Days Between Releases', x_title='Release', y_title='Days', x_label_rotation = -45)
+	line_chart = pygal.Line(title = 'Average Days Between Releases', x_title='Release', y_title='Days', x_label_rotation = -45, style = invis_style)
 	all_release_times = []
 	for library in libraries:
 		release_times = []
@@ -161,7 +174,7 @@ def generate_line_chart_release_frequency(libraries):
 
 # last modification date
 def generate_bar_chart_last_modification(libraries):
-	bar_chart = pygal.Bar(title = 'Days Since Last Release', x_title='', y_title='Days', x_label_rotation = -45)
+	bar_chart = pygal.Bar(title = 'Days Since Last Release', x_title='', y_title='Days', x_label_rotation = -45, style = invis_style)
 
 	now = datetime.now()
 	days_from_release = []
@@ -181,7 +194,7 @@ def generate_bar_chart_last_modification(libraries):
 
 # performance
 def generate_bar_chart_performance(libraries):
-	bar_chart = pygal.Bar(range=(0,1), title = 'Percentage Of Total Performance Related Issues',  x_title='', y_title='Percentage', x_label_rotation = -45)
+	bar_chart = pygal.Bar(range=(0,1), title = 'Percentage Of Total Performance Related Issues',  x_title='', y_title='Percentage', x_label_rotation = -45, style = invis_style)
 
 	count = 0
 	unsorted_list = []
@@ -200,7 +213,7 @@ def generate_bar_chart_performance(libraries):
 	return bar_chart
 
 def generate_box_chart_performance(libraries):
-	box_chart = pygal.Box(range=(0,1), title = 'Percentage Of Total Performance Related Issues', x_title='Total Performance Issues', y_title='Percentage', x_label_rotation = -45)
+	box_chart = pygal.Box(range=(0,1), title = 'Percentage Of Total Performance Related Issues', x_title='Total Performance Issues', y_title='Percentage', x_label_rotation = -45, style = invis_style)
 
 	count = 0
 	unsorted_list = []
@@ -222,7 +235,7 @@ def generate_box_chart_performance(libraries):
 	return box_chart
 
 def generate_solid_gauge_chart_performance(libraries):
-	gauge_chart = pygal.SolidGauge(title = 'Percentage Of Total Performance Related Issues', x_title='', y_title='', x_label_rotation = -45)
+	gauge_chart = pygal.SolidGauge(title = 'Percentage Of Total Performance Related Issues', x_title='', y_title='', x_label_rotation = -45, style = invis_style)
 	
 	count = 0
 	unsorted_list = []
@@ -243,7 +256,7 @@ def generate_solid_gauge_chart_performance(libraries):
 
 # security
 def generate_bar_chart_security(libraries):
-	bar_chart = pygal.Bar(range=(0,1), title = 'Percentage Of Total Security Related Issues', x_title='', y_title='Percentage', x_label_rotation = -45)
+	bar_chart = pygal.Bar(range=(0,1), title = 'Percentage Of Total Security Related Issues', x_title='', y_title='Percentage', x_label_rotation = -45, style = invis_style)
 
 	count = 0
 	unsorted_list = []
@@ -262,7 +275,7 @@ def generate_bar_chart_security(libraries):
 	return bar_chart
 
 def generate_box_chart_security(libraries):
-	box_chart = pygal.Box(range=(0,1), title = 'Percentage Of Total Security Related Issues', x_title='Total Security Issues', y_title='Percentage', x_label_rotation = -45)
+	box_chart = pygal.Box(range=(0,1), title = 'Percentage Of Total Security Related Issues', x_title='Total Security Issues', y_title='Percentage', x_label_rotation = -45, style = invis_style)
 
 	count = 0
 	unsorted_list = []
@@ -284,7 +297,7 @@ def generate_box_chart_security(libraries):
 	return box_chart
 
 def generate_solid_gauge_chart_security(libraries):
-	gauge_chart = pygal.SolidGauge(title = 'Percentage Of Total Security Related Issues', x_title='', y_title='', x_label_rotation = -45)
+	gauge_chart = pygal.SolidGauge(title = 'Percentage Of Total Security Related Issues', x_title='', y_title='', x_label_rotation = -45, style = invis_style)
 	
 	count = 0
 	unsorted_list = []
@@ -304,7 +317,7 @@ def generate_solid_gauge_chart_security(libraries):
 
 # issue closing time
 def generate_xy_chart_issue_closing_time(libraries):
-	xy_chart = pygal.XY(range=(0,1), title = 'Average Time To Close An Issue vs Percentage of Issues Not Closed', x_title='Average Days To Close Issue', y_title='Percentage Of Issues Closed', x_label_rotation = -45)
+	xy_chart = pygal.XY(range=(0,1), title = 'Average Time To Close An Issue vs Percentage of Issues Not Closed', x_title='Average Days To Close Issue', y_title='Percentage Of Issues Closed', x_label_rotation = -45, style = invis_style)
 	for library in libraries:
 		issue_count = len(library.issue_data)
 		not_responded_count = 0
@@ -323,7 +336,7 @@ def generate_xy_chart_issue_closing_time(libraries):
 	return xy_chart
 
 def generate_box_chart_issue_closing_time(libraries):
-	box_chart = pygal.Box(title = 'Days Taken To Close Issue', x_title='Total Issues Closed', y_title='Days', x_label_rotation = -45)
+	box_chart = pygal.Box(title = 'Days Taken To Close Issue', x_title='Total Issues Closed', y_title='Days', x_label_rotation = -45, style = invis_style)
 	all_response_times = []
 	for library in libraries:
 		response_times = []
@@ -338,7 +351,7 @@ def generate_box_chart_issue_closing_time(libraries):
 
 # issue response time
 def generate_xy_chart_issue_response_time(libraries):
-	xy_chart = pygal.XY(range=(0,1), title = 'Average Time To Respond To An Issue vs Percentage of Issues Not Responded To' , x_title='Average Days To Response', y_title='Percentage of Issues Not Responded To', x_label_rotation = -45)
+	xy_chart = pygal.XY(range=(0,1), title = 'Average Time To Respond To An Issue vs Percentage of Issues Not Responded To' , x_title='Average Days To Response', y_title='Percentage of Issues Not Responded To', x_label_rotation = -45, style = invis_style)
 	for library in libraries:
 		issue_count = len(library.issue_data)
 		not_responded_count = 0
@@ -357,7 +370,7 @@ def generate_xy_chart_issue_response_time(libraries):
 	return xy_chart
 
 def generate_box_chart_issue_response_time(libraries):
-	box_chart = pygal.Box(title = 'Days Taken To Respond To Issue', x_title='Total Issues Responsed To', y_title='Days', x_label_rotation = -45)
+	box_chart = pygal.Box(title = 'Days Taken To Respond To Issue', x_title='Total Issues Responsed To', y_title='Days', x_label_rotation = -45, style = invis_style)
 	all_response_times = []
 	for library in libraries:
 		response_times = []
@@ -372,7 +385,7 @@ def generate_box_chart_issue_response_time(libraries):
 
 # backwards compatability
 def generate_bar_chart_backwards_compatibility(libraries):
-	bar_chart = pygal.Bar(title = 'Average Number Of Breaking Changes Per Version', x_title='', y_title='', x_label_rotation = -45)
+	bar_chart = pygal.Bar(title = 'Average Number Of Breaking Changes Per Version', x_title='', y_title='', x_label_rotation = -45, style = invis_style)
 
 	unsorted_list = []
 	for library in libraries:
@@ -387,7 +400,7 @@ def generate_bar_chart_backwards_compatibility(libraries):
 	return bar_chart
 
 def generate_box_chart_backwards_compatibility(libraries):
-	box_chart = pygal.Box(title = 'Number Of Breaking Changes Per Version', x_title='Total Number Of Versions', y_title='', x_label_rotation = -45)
+	box_chart = pygal.Box(title = 'Number Of Breaking Changes Per Version', x_title='Total Number Of Versions', y_title='', x_label_rotation = -45, style = invis_style)
 
 	labels = []
 	for library in libraries:
@@ -398,7 +411,7 @@ def generate_box_chart_backwards_compatibility(libraries):
 	return box_chart
 
 def generate_line_chart_backwards_compatibility(libraries):
-	line_chart = pygal.Line(title = 'Number Of Breaking Changes Per Version', x_title='Version', y_title='Number Of Breaking Changes', x_label_rotation = -45)
+	line_chart = pygal.Line(title = 'Number Of Breaking Changes Per Version', x_title='Version', y_title='Number Of Breaking Changes', x_label_rotation = -45, style = invis_style)
 
 	for library in libraries:
 		line_chart.add(library.name, library.backward_compatibilty)
@@ -407,7 +420,7 @@ def generate_line_chart_backwards_compatibility(libraries):
 
 # last discussed on stack overflow
 def generate_bar_chart_last_discussed(libraries):
-	bar_chart = pygal.Bar(title = 'Days Since Last Discussed On Stack Overflow', x_title='', y_title='Days', x_label_rotation = -45)
+	bar_chart = pygal.Bar(title = 'Days Since Last Discussed On Stack Overflow', x_title='', y_title='Days', x_label_rotation = -45, style = invis_style)
 
 	now = datetime.now()
 	days_from_release = []
@@ -428,7 +441,7 @@ def generate_bar_chart_last_discussed(libraries):
 	return bar_chart
 
 def generate_box_chart_last_discussed(libraries):
-	box_chart = pygal.Box(title = 'Days Since Last Discussed On Stack Overflow', x_title='Total Discussions', y_title='', x_label_rotation = -45)
+	box_chart = pygal.Box(title = 'Days Since Last Discussed On Stack Overflow', x_title='Total Discussions', y_title='', x_label_rotation = -45, style = invis_style)
 
 	now = datetime.now()
 	unsorted_list = []
@@ -453,7 +466,7 @@ def generate_box_chart_last_discussed(libraries):
 	return box_chart
 
 def generate_scatter_chart_last_discussed(libraries):
-	xy_chart = pygal.XY(stroke = False, title = 'Days Since Last Discussed On Stack Overflow', x_title='Days', y_title='Total Discussions', x_label_rotation = -45)
+	xy_chart = pygal.XY(stroke = False, title = 'Days Since Last Discussed On Stack Overflow', x_title='Days', y_title='Total Discussions', x_label_rotation = -45, style = invis_style)
 
 	now = datetime.now()
 	unsorted_list = []
