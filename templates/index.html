@@ -171,6 +171,7 @@
       //   }
       // });
 
+
       $("#save-button").click(function() {
         if(!$(this).attr('disabled')) {
           // set dictionary of current settings
@@ -206,6 +207,7 @@
           }
 
           // generate charts
+          // TYLER THIS IS THE PLACE
           $.ajax({
            type: "POST",
            contentType: 'application/json',
@@ -216,12 +218,16 @@
             $("#empty-screen").css({"display":"none"});
             $("#visualizations").css({"display":"inline-block"});
             for(var i = 1; i < data.length + 1; ++i) {
-              $("#chart" + i).prop("src", data[i - 1]);
+              $("#chart" + i).prop("src", data[i - 1].data);
               $("#chart" + i).css({"display":"inline-block"});
             }
             for(var i = data.length + 1; i <= 4; ++i) {
               $("#viz" + i).css({"display":"none"});
             }
+
+            // IF DATA[index].type is raw_data DO THIS
+            // $("#viz1").empty();
+            // $("#viz1").append(data[0].data);
           }).fail(function(xhr, status, error) {
             console.log(error);
           });

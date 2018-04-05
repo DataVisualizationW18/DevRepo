@@ -72,8 +72,21 @@ def handle_data():
     chart2 = line_chart2.render_data_uri()
 
     charts = []
-    charts.append(chart)
-    charts.append(chart)
-    charts.append(chart2)
+    charts.append({
+        "type": "chart",
+        "data": chart
+    });
+    charts.append({
+        "type": "chart",
+        "data": chart
+    });
+    charts.append({
+        "type": "chart",
+        "data": chart2
+    });
+    # charts.append({
+    #     "type": "raw_data",
+    #     "data": ""
+    # });
 
     return jsonify(charts)
