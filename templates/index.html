@@ -110,10 +110,6 @@
               <embed id="chart1" type="image/svg+xml" src="" />
               <div id="viz1-options" class="option-menu" style="display: none;">
                 <div id="viz1-options-button-group" class="options-button-group button-group">
-                  <a class="button">1</a>
-                  <a class="button">2</a>
-                  <a class="button">3</a>
-                  <a class="button">4</a>
                 </div>
                 <div class="option-menu-button-group button-group">
                   <a id="viz1-apply" class="button">APPLY CHANGES</a>
@@ -129,10 +125,6 @@
               <embed id="chart2" type="image/svg+xml" src="" />
               <div id="viz2-options" class="option-menu" style="display: none;">
                 <div id="viz2-options-button-group" class="options-button-group button-group">
-                  <a class="button">1</a>
-                  <a class="button">2</a>
-                  <a class="button">3</a>
-                  <a class="button">4</a>
                 </div>
                 <div class="option-menu-button-group button-group">
                   <a id="viz2-apply" class="button">APPLY CHANGES</a>
@@ -148,10 +140,6 @@
               <embed id="chart3" type="image/svg+xml" src="" />
               <div id="viz3-options" class="option-menu" style="display: none;">
                 <div id="viz3-options-button-group" class="options-button-group button-group">
-                  <a class="button">1</a>
-                  <a class="button">2</a>
-                  <a class="button">3</a>
-                  <a class="button">4</a>
                 </div>
                 <div class="option-menu-button-group button-group">
                   <a id="viz3-apply" class="button">APPLY CHANGES</a>
@@ -167,10 +155,6 @@
               <embed id="chart4" type="image/svg+xml" src="" />
               <div id="viz4-options" class="option-menu" style="display: none;">
                 <div id="viz4-options-button-group" class="options-button-group button-group">
-                  <a class="button">1</a>
-                  <a class="button">2</a>
-                  <a class="button">3</a>
-                  <a class="button">4</a>
                 </div>
                 <div class="option-menu-button-group button-group">
                   <a id="viz4-apply" class="button">APPLY CHANGES</a>
@@ -299,6 +283,7 @@
             for(var i = 1; i < data.length + 1; ++i) {
               $("#chart" + i).prop("src", data[i - 1].data);
               $("#chart" + i).css({"display":"inline-block"});
+              $("#chart" + i).prop("value", data[i - 1].metric);
             }
             for(var i = data.length + 1; i <= 4; ++i) {
               $("#viz" + i).css({"display":"none"});
@@ -421,24 +406,48 @@
         $("#chart1").css({"display":"none"});
         $("#viz1-options").css({"display":"inline-block"});
         $("#viz1-button").css({"display":"none"});
+
+        var chart_types = {{ chart_types|tojson }}[$("#chart1")["0"].value]
+        $("#viz1-options-button-group").empty();
+        for(var i = 0; i < chart_types.length; ++i) {
+          $("#viz1-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+        }
       });
 
       $("#viz2-button").on("click", function(e) {
         $("#chart2").css({"display":"none"});
         $("#viz2-options").css({"display":"inline-block"});
         $("#viz2-button").css({"display":"none"});
+
+        var chart_types = {{ chart_types|tojson }}[$("#chart2")["0"].value]
+        $("#viz2-options-button-group").empty();
+        for(var i = 0; i < chart_types.length; ++i) {
+          $("#viz2-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+        }
       });
 
       $("#viz3-button").on("click", function(e) {
         $("#chart3").css({"display":"none"});
         $("#viz3-options").css({"display":"inline-block"});
         $("#viz3-button").css({"display":"none"});
+
+        var chart_types = {{ chart_types|tojson }}[$("#chart3")["0"].value]
+        $("#viz3-options-button-group").empty();
+        for(var i = 0; i < chart_types.length; ++i) {
+          $("#viz3-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+        }
       });
 
       $("#viz4-button").on("click", function(e) {
         $("#chart4").css({"display":"none"});
         $("#viz4-options").css({"display":"inline-block"});
         $("#viz4-button").css({"display":"none"});
+
+        var chart_types = {{ chart_types|tojson }}[$("#chart4")["0"].value]
+        $("#viz4-options-button-group").empty();
+        for(var i = 0; i < chart_types.length; ++i) {
+          $("#viz4-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+        }
       });
 
       $("#viz1-apply").on("click", function(e) {

@@ -24,9 +24,41 @@ def hello_world(name=None):
     }
 
     chart_types = {
-        "release_frequency" : [
-            "bar_chart_with_raw_numbers",
-            "bar_chart_with_average"
+        "popularity" : [
+            "bar_raw",
+            "pie",
+            "gauge"
+        ],
+        "release-frequency" : [
+            "bar_avg",
+            "box"
+        ],
+        "last-modification-date" : [
+            "bar_days"
+        ],
+        "performance" : [
+            "gauge",
+            "box"
+        ],
+        "security" : [
+            "gauge",
+            "box"
+        ],
+        "issue-response-time" : [
+            "xy",
+            "box"
+        ],
+        "issue-closing-time" : [
+            "xy",
+            "box"
+        ],
+        "backwards-compatibility" : [
+            "bar",
+            "line"
+        ],
+        "last-discussed-on-so" : [
+            "box",
+            "scatter"
         ]
     }
 
@@ -73,14 +105,17 @@ def handle_data():
 
     charts = []
     charts.append({
+        "metric": "popularity",
         "type": "chart",
         "data": chart
     });
     charts.append({
+        "metric": "performance",
         "type": "chart",
         "data": chart
     });
     charts.append({
+        "metric": "issue-closing-time",
         "type": "chart",
         "data": chart2
     });
