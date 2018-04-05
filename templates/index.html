@@ -181,8 +181,9 @@
 
       var history_queue = []
 
-      $("#cancel-button").click(function() {
+      var getData = function () {
         var data = {}
+
         var selected_domain = $("#domain :selected")
         var selected_libraries = $("#libraries :checked")
         var selected_metrics = $("#metrics :selected")
@@ -190,14 +191,35 @@
         data.domain = selected_domain["0"].textContent
         data.libraries = []
         for(var i = 0; i < selected_libraries.length; ++i) {
-          data.libraries.push(selected_libraries[i].id)
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
         }
         data.metrics = []
         for(var i = 0; i < selected_metrics.length; ++i) {
-          if(selected_metrics[i].textContent != "None") {
-            data.metrics.push(selected_metrics[i].textContent)
+          if(selected_metrics[i].value != "") {
+            data.metrics.push({
+              "metric": selected_metrics[i].value,
+              "chart_type": "default"
+            });
           }
         }
+
+        return data;
+      }
+
+      var updateHistory = function(data) {
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          $("#history-cards > div").first().text(JSON.stringify(data))
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+      }
+
+      $("#cancel-button").click(function() {
+        var data = getData();
 
         var last_history = history_queue[history_queue.length - 1]
         if(!_.isEqual(last_history, data)) {
@@ -236,66 +258,45 @@
         }
       });
 
+      var generateCharts = function(data) {
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          $("#empty-screen").css({"display":"none"});
+          $("#visualizations").css({"display":"inline-block"});
+          for(var i = 1; i < data.length + 1; ++i) {
+            $("#chart" + i).prop("src", data[i - 1].data);
+            $("#chart" + i).css({"display":"inline-block"});
+            $("#chart" + i).prop("metric", data[i - 1].metric);
+            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+            console.log($("#chart" + i));
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
+      }
+
       $("#save-button").click(function() {
         if(!$(this).attr('disabled')) {
           // set dictionary of current settings
-          var data = {}
-          var selected_domain = $("#domain :selected")
-          var selected_libraries = $("#libraries :checked")
-          var selected_metrics = $("#metrics :selected")
-
-          data.domain = selected_domain["0"].textContent
-          data.libraries = []
-          for(var i = 0; i < selected_libraries.length; ++i) {
-            if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-              data.libraries.push(selected_libraries[i].id);
-            }
-          }
-          data.metrics = []
-          for(var i = 0; i < selected_metrics.length; ++i) {
-            if(selected_metrics[i].value != "") {
-              data.metrics.push({
-                "metric": selected_metrics[i].value,
-                "chart_type": "default"
-              });
-            }
-          }
+          var data = getData();
 
           // update history
-          if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-            history_queue.push(data);
-            $("#history-cards > div").first().text(JSON.stringify(data))
-          }
-          if(history_queue.length > 4) {
-            history_queue.splice(0, 1);
-          }
+          updateHistory(data)
 
           // generate charts
-          $.ajax({
-           type: "POST",
-           contentType: 'application/json',
-           url: "/generate_chart",
-           data: JSON.stringify(data),
-           dataType: 'json'
-          }).done(function(data)  {
-            $("#empty-screen").css({"display":"none"});
-            $("#visualizations").css({"display":"inline-block"});
-            for(var i = 1; i < data.length + 1; ++i) {
-              $("#chart" + i).prop("src", data[i - 1].data);
-              $("#chart" + i).css({"display":"inline-block"});
-              $("#chart" + i).prop("metric", data[i - 1].metric);
-              $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
-              console.log($("#chart" + i));
-            }
-            for(var i = data.length + 1; i <= 4; ++i) {
-              $("#viz" + i).css({"display":"none"});
-            }
-          }).fail(function(xhr, status, error) {
-            console.log(error);
-          });
+          generateCharts(data)
         }
       });
 
+      // on domain change show correct libraries and disable save if needed
       $('#domain').on('change', function (e) {
         var optionSelected = $("option:selected", this);
         var valueSelected = $("option:selected")["0"].value;
@@ -346,6 +347,7 @@
         }
       });
 
+      // on library change disable save if needed
       $("#libraries").on('change', function(e) {
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
@@ -362,6 +364,7 @@
         }
       });
 
+      // on metric change disable save if needed
       $("#metrics").on('change', function(e) {
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
@@ -378,6 +381,7 @@
         }
       });
 
+      // on show more, display history cards in expandable window
       $("#show-more").click(function() {
         if (!$("#history-section").hasClass("expanded")){
           // fade in previous history cards
@@ -404,428 +408,169 @@
         }
       });
 
-      $("#viz1-button").on("click", function(e) {
-        $("#chart1").css({"display":"none"});
-        $("#viz1-options").css({"display":"inline-block"});
-        $("#viz1-button").css({"display":"none"});
+      var showOptions = function(i) {
+        $("#chart" + i).css({"display":"none"});
+        $("#viz" + i + "-options").css({"display":"inline-block"});
+        $("#viz" + i + "-button").css({"display":"none"});
+      }
 
-        var chart_types = {{ chart_types|tojson }}[$("#chart1")["0"].metric]
-        $("#viz1-options-button-group").empty();
-        for(var i = 0; i < chart_types.length; ++i) {
+      var showChartTypes = function(i) {
+        var chart_types = {{ chart_types|tojson }}[$("#chart" + i)["0"].metric]
+        $("#viz" + i + "-options-button-group").empty();
+        for(var j = 0; j < chart_types.length; ++j) {
           var add_class = ""
-          if(_.isEqual(chart_types[i], $("#chart1")["0"].chart_type)) {
+          if(_.isEqual(chart_types[j], $("#chart" + i)["0"].chart_type)) {
             add_class = "selected"
           }
-          $("#viz1-options-button-group").append("<a id=\"viz1-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
-          $("#viz1-" + chart_types[i])["0"].chart_type = chart_types[i];
-          $("#viz1-" + chart_types[i]).on("click", function(e) {
+          $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_types[j] + "\" class=\"button " + add_class + "\">" + chart_types[j] + "</a>")
+          $("#viz" + i + "-" + chart_types[j])["0"].chart_type = chart_types[j];
+          $("#viz" + i + "-" + chart_types[j]).on("click", function(e) {
             $(this).addClass('selected').siblings().removeClass('selected');
           });
         }
+      }
+
+      $("#viz1-button").on("click", function(e) {
+        showOptions(1);
+        showChartTypes(1);
       });
 
       $("#viz2-button").on("click", function(e) {
-        $("#chart2").css({"display":"none"});
-        $("#viz2-options").css({"display":"inline-block"});
-        $("#viz2-button").css({"display":"none"});
-
-        var chart_types = {{ chart_types|tojson }}[$("#chart2")["0"].metric]
-        $("#viz2-options-button-group").empty();
-        for(var i = 0; i < chart_types.length; ++i) {
-          var add_class = ""
-          if(_.isEqual(chart_types[i], $("#chart2")["0"].chart_type)) {
-            add_class = "selected"
-          }
-          $("#viz2-options-button-group").append("<a id=\"viz2-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
-          $("#viz2-" + chart_types[i])["0"].chart_type = chart_types[i];
-          $("#viz2-" + chart_types[i]).on("click", function(e) {
-            $(this).addClass('selected').siblings().removeClass('selected');
-          });
-        }
+        showOptions(2);
+        showChartTypes(2);
       });
 
       $("#viz3-button").on("click", function(e) {
-        $("#chart3").css({"display":"none"});
-        $("#viz3-options").css({"display":"inline-block"});
-        $("#viz3-button").css({"display":"none"});
-
-        var chart_types = {{ chart_types|tojson }}[$("#chart3")["0"].metric]
-        $("#viz3-options-button-group").empty();
-        for(var i = 0; i < chart_types.length; ++i) {
-          var add_class = ""
-          if(_.isEqual(chart_types[i], $("#chart3")["0"].chart_type)) {
-            add_class = "selected"
-          }
-          $("#viz3-options-button-group").append("<a id=\"viz3-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
-          $("#viz3-" + chart_types[i])["0"].chart_type = chart_types[i];
-          $("#viz3-" + chart_types[i]).on("click", function(e) {
-            $(this).addClass('selected').siblings().removeClass('selected');
-          });
-        }
+        showOptions(3);
+        showChartTypes(3);
       });
 
       $("#viz4-button").on("click", function(e) {
-        $("#chart4").css({"display":"none"});
-        $("#viz4-options").css({"display":"inline-block"});
-        $("#viz4-button").css({"display":"none"});
-
-        var chart_types = {{ chart_types|tojson }}[$("#chart4")["0"].metric]
-        $("#viz4-options-button-group").empty();
-        for(var i = 0; i < chart_types.length; ++i) {
-          var add_class = ""
-          if(_.isEqual(chart_types[i], $("#chart4")["0"].chart_type)) {
-            add_class = "selected"
-          }
-          $("#viz4-options-button-group").append("<a id=\"viz4-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
-          $("#viz4-" + chart_types[i])["0"].chart_type = chart_types[i];
-          $("#viz4-" + chart_types[i]).on("click", function(e) {
-            $(this).addClass('selected').siblings().removeClass('selected');
-          });
-        }
+        showOptions(4);
+        showChartTypes(4);
       });
 
-      $("#viz1-apply").on("click", function(e) {
-        $("#chart1").css({"display":"inline-block"});
-        $("#viz1-options").css({"display":"none"});
-        $("#viz1-button").css({"display":"inline-block"});
+      var showChart = function(i) {
+        $("#chart" + i).css({"display":"inline-block"});
+        $("#viz" + i + "-options").css({"display":"none"});
+        $("#viz" + i + "-button").css({"display":"inline-block"});
+      }
 
+      var getDataFromChart = function() {
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
+        }
+        data.metrics = []
+        if($("#chart1")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart1")["0"].metric,
+            "chart_type": $("#chart1")["0"].chart_type
+          });
+        }
+        if($("#chart2")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart2")["0"].metric,
+            "chart_type": $("#chart2")["0"].chart_type
+          });
+        }
+        if($("#chart3")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart3")["0"].metric,
+            "chart_type": $("#chart3")["0"].chart_type
+          });
+        }
+        if($("#chart4")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart4")["0"].metric,
+            "chart_type": $("#chart4")["0"].chart_type
+          });
+        }
+        return data;
+      }
+
+      $("#viz1-apply").on("click", function(e) {
+        showChart(1);
         $("#chart1")["0"].chart_type = $("#viz1-options-button-group").find(".selected")["0"].chart_type
 
         // set dictionary of current settings
-        var data = {}
-        var selected_domain = $("#domain :selected")
-        var selected_libraries = $("#libraries :checked")
-        var selected_metrics = $("#metrics :selected")
-
-        data.domain = selected_domain["0"].textContent
-        data.libraries = []
-        for(var i = 0; i < selected_libraries.length; ++i) {
-          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-            data.libraries.push(selected_libraries[i].id);
-          }
-        }
-        data.metrics = []
-        if($("#chart1")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart1")["0"].metric,
-            "chart_type": $("#chart1")["0"].chart_type
-          });
-        }
-        if($("#chart2")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart2")["0"].metric,
-            "chart_type": $("#chart2")["0"].chart_type
-          });
-        }
-        if($("#chart3")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart3")["0"].metric,
-            "chart_type": $("#chart3")["0"].chart_type
-          });
-        }
-        if($("#chart4")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart4")["0"].metric,
-            "chart_type": $("#chart4")["0"].chart_type
-          });
-        }
+        var data = getDataFromChart();
 
         // update history
-        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-          history_queue.push(data);
-          $("#history-cards > div").first().text(JSON.stringify(data))
-        }
-        if(history_queue.length > 4) {
-          history_queue.splice(0, 1);
-        }
+        updateHistory(data)
 
         console.log(data)
 
-        $.ajax({
-         type: "POST",
-         contentType: 'application/json',
-         url: "/generate_chart",
-         data: JSON.stringify(data),
-         dataType: 'json'
-        }).done(function(data)  {
-          $("#empty-screen").css({"display":"none"});
-          $("#visualizations").css({"display":"inline-block"});
-          for(var i = 1; i < data.length + 1; ++i) {
-            $("#chart" + i).prop("src", data[i - 1].data);
-            $("#chart" + i).css({"display":"inline-block"});
-            $("#chart" + i).prop("metric", data[i - 1].metric);
-            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
-          }
-          for(var i = data.length + 1; i <= 4; ++i) {
-            $("#viz" + i).css({"display":"none"});
-          }
-        }).fail(function(xhr, status, error) {
-          console.log(error);
-        });
+        generateCharts(data)
       });
 
       $("#viz2-apply").on("click", function(e) {
-        $("#chart2").css({"display":"inline-block"});
-        $("#viz2-options").css({"display":"none"});
-        $("#viz2-button").css({"display":"inline-block"});
-
+        showChart(2);
         $("#chart2")["0"].chart_type = $("#viz2-options-button-group").find(".selected")["0"].chart_type
 
         // set dictionary of current settings
-        var data = {}
-        var selected_domain = $("#domain :selected")
-        var selected_libraries = $("#libraries :checked")
-        var selected_metrics = $("#metrics :selected")
-
-        data.domain = selected_domain["0"].textContent
-        data.libraries = []
-        for(var i = 0; i < selected_libraries.length; ++i) {
-          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-            data.libraries.push(selected_libraries[i].id);
-          }
-        }
-        data.metrics = []
-        if($("#chart1")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart1")["0"].metric,
-            "chart_type": $("#chart1")["0"].chart_type
-          });
-        }
-        if($("#chart2")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart2")["0"].metric,
-            "chart_type": $("#chart2")["0"].chart_type
-          });
-        }
-        if($("#chart3")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart3")["0"].metric,
-            "chart_type": $("#chart3")["0"].chart_type
-          });
-        }
-        if($("#chart4")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart4")["0"].metric,
-            "chart_type": $("#chart4")["0"].chart_type
-          });
-        }
+        var data = getDataFromChart();
 
         // update history
-        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-          history_queue.push(data);
-          $("#history-cards > div").first().text(JSON.stringify(data))
-        }
-        if(history_queue.length > 4) {
-          history_queue.splice(0, 1);
-        }
+        updateHistory(data)
 
         console.log(data)
 
-        $.ajax({
-         type: "POST",
-         contentType: 'application/json',
-         url: "/generate_chart",
-         data: JSON.stringify(data),
-         dataType: 'json'
-        }).done(function(data)  {
-          $("#empty-screen").css({"display":"none"});
-          $("#visualizations").css({"display":"inline-block"});
-          for(var i = 1; i < data.length + 1; ++i) {
-            $("#chart" + i).prop("src", data[i - 1].data);
-            $("#chart" + i).css({"display":"inline-block"});
-            $("#chart" + i).prop("metric", data[i - 1].metric);
-            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
-          }
-          for(var i = data.length + 1; i <= 4; ++i) {
-            $("#viz" + i).css({"display":"none"});
-          }
-        }).fail(function(xhr, status, error) {
-          console.log(error);
-        });
+        generateCharts(data)
       });
 
       $("#viz3-apply").on("click", function(e) {
-        $("#chart3").css({"display":"inline-block"});
-        $("#viz3-options").css({"display":"none"});
-        $("#viz3-button").css({"display":"inline-block"});
-
+        showChart(3);
         $("#chart3")["0"].chart_type = $("#viz3-options-button-group").find(".selected")["0"].chart_type
 
         // set dictionary of current settings
-        var data = {}
-        var selected_domain = $("#domain :selected")
-        var selected_libraries = $("#libraries :checked")
-        var selected_metrics = $("#metrics :selected")
-
-        data.domain = selected_domain["0"].textContent
-        data.libraries = []
-        for(var i = 0; i < selected_libraries.length; ++i) {
-          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-            data.libraries.push(selected_libraries[i].id);
-          }
-        }
-        data.metrics = []
-        if($("#chart1")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart1")["0"].metric,
-            "chart_type": $("#chart1")["0"].chart_type
-          });
-        }
-        if($("#chart2")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart2")["0"].metric,
-            "chart_type": $("#chart2")["0"].chart_type
-          });
-        }
-        if($("#chart3")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart3")["0"].metric,
-            "chart_type": $("#chart3")["0"].chart_type
-          });
-        }
-        if($("#chart4")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart4")["0"].metric,
-            "chart_type": $("#chart4")["0"].chart_type
-          });
-        }
+        var data = getDataFromChart();
 
         // update history
-        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-          history_queue.push(data);
-          $("#history-cards > div").first().text(JSON.stringify(data))
-        }
-        if(history_queue.length > 4) {
-          history_queue.splice(0, 1);
-        }
+        updateHistory(data)
 
         console.log(data)
 
-        $.ajax({
-         type: "POST",
-         contentType: 'application/json',
-         url: "/generate_chart",
-         data: JSON.stringify(data),
-         dataType: 'json'
-        }).done(function(data)  {
-          $("#empty-screen").css({"display":"none"});
-          $("#visualizations").css({"display":"inline-block"});
-          for(var i = 1; i < data.length + 1; ++i) {
-            $("#chart" + i).prop("src", data[i - 1].data);
-            $("#chart" + i).css({"display":"inline-block"});
-            $("#chart" + i).prop("metric", data[i - 1].metric);
-            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
-          }
-          for(var i = data.length + 1; i <= 4; ++i) {
-            $("#viz" + i).css({"display":"none"});
-          }
-        }).fail(function(xhr, status, error) {
-          console.log(error);
-        });
+        generateCharts(data)
       });
 
       $("#viz4-apply").on("click", function(e) {
-        $("#chart4").css({"display":"inline-block"});
-        $("#viz4-options").css({"display":"none"});
-        $("#viz4-button").css({"display":"inline-block"});
-
+        showChart(4);
         $("#chart4")["0"].chart_type = $("#viz4-options-button-group").find(".selected")["0"].chart_type
 
         // set dictionary of current settings
-        var data = {}
-        var selected_domain = $("#domain :selected")
-        var selected_libraries = $("#libraries :checked")
-        var selected_metrics = $("#metrics :selected")
-
-        data.domain = selected_domain["0"].textContent
-        data.libraries = []
-        for(var i = 0; i < selected_libraries.length; ++i) {
-          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-            data.libraries.push(selected_libraries[i].id);
-          }
-        }
-        data.metrics = []
-        if($("#chart1")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart1")["0"].metric,
-            "chart_type": $("#chart1")["0"].chart_type
-          });
-        }
-        if($("#chart2")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart2")["0"].metric,
-            "chart_type": $("#chart2")["0"].chart_type
-          });
-        }
-        if($("#chart3")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart3")["0"].metric,
-            "chart_type": $("#chart3")["0"].chart_type
-          });
-        }
-        if($("#chart4")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart4")["0"].metric,
-            "chart_type": $("#chart4")["0"].chart_type
-          });
-        }
+        var data = getDataFromChart();
 
         // update history
-        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-          history_queue.push(data);
-          $("#history-cards > div").first().text(JSON.stringify(data))
-        }
-        if(history_queue.length > 4) {
-          history_queue.splice(0, 1);
-        }
+        updateHistory(data)
 
         console.log(data)
 
-        $.ajax({
-         type: "POST",
-         contentType: 'application/json',
-         url: "/generate_chart",
-         data: JSON.stringify(data),
-         dataType: 'json'
-        }).done(function(data)  {
-          $("#empty-screen").css({"display":"none"});
-          $("#visualizations").css({"display":"inline-block"});
-          for(var i = 1; i < data.length + 1; ++i) {
-            $("#chart" + i).prop("src", data[i - 1].data);
-            $("#chart" + i).css({"display":"inline-block"});
-            $("#chart" + i).prop("metric", data[i - 1].metric);
-            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
-          }
-          for(var i = data.length + 1; i <= 4; ++i) {
-            $("#viz" + i).css({"display":"none"});
-          }
-        }).fail(function(xhr, status, error) {
-          console.log(error);
-        });
+        generateCharts(data)
       });
 
       $("#viz1-cancel").on("click", function(e) {
-        $("#chart1").css({"display":"inline-block"});
-        $("#viz1-options").css({"display":"none"});
-        $("#viz1-button").css({"display":"inline-block"});
+        showChart(1);
       });
 
       $("#viz2-cancel").on("click", function(e) {
-        $("#chart2").css({"display":"inline-block"});
-        $("#viz2-options").css({"display":"none"});
-        $("#viz2-button").css({"display":"inline-block"});
+        showChart(2);
       });
 
       $("#viz3-cancel").on("click", function(e) {
-        $("#chart3").css({"display":"inline-block"});
-        $("#viz3-options").css({"display":"none"});
-        $("#viz3-button").css({"display":"inline-block"});
+        showChart(3);
       });
 
       $("#viz4-cancel").on("click", function(e) {
-        $("#chart4").css({"display":"inline-block"});
-        $("#viz4-options").css({"display":"none"});
-        $("#viz4-button").css({"display":"inline-block"});
+        showChart(4);
       });
     </script>
   </body>
