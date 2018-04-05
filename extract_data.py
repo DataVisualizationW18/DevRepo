@@ -35,6 +35,8 @@ class Date(object):
     self.year = int(year)
     self.month = int(month)
     self.day = int(day)
+  def toStr(self):
+    return(str(self.year)+'-'+str(self.month)+'-'+str(self.day))
 
 def getDomainsAndLibraries(sheet):
   global Domains

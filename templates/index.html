@@ -220,114 +220,6 @@
         return data;
       }
 
-      var updateFirstHistory = function(data) {
-        var card_string = "<p>Domain: " + data.domain + "</p>" +
-                          "<p>Libraries: "
-        for(var i = 0; i < data.libraries.length; ++i) {
-          card_string += data.libraries[i]
-          if(i < data.libraries.length - 1) {
-            card_string += ", "
-          }
-        }
-        card_string += "</p><p>Metrics: "
-        for(var i = 0; i < data.metrics.length; ++i) {
-          card_string += data.metrics[i].metric + " (" + data.metrics[i].chart_type + ")"
-          if(i < data.metrics.length - 1) {
-            card_string += ", "
-          }
-        }
-        card_string += "</p>"
-        $("#history-cards > div").first().empty()
-        $("#history-cards > div").first().append(card_string)
-      }
-
-      var updateAllHistory = function() {
-        for(var i = 0; i < history_queue.length; ++i) {
-          var data = history_queue[i]
-          var card_string = "<p>Domain: " + data.domain + "</p>" +
-                            "<p>Libraries: "
-          for(var j = 0; j < data.libraries.length; ++j) {
-            card_string += data.libraries[j]
-            if(i < data.libraries.length - 1) {
-              card_string += ", "
-            }
-          }
-          card_string += "</p><p>Metrics: "
-          for(var j = 0; j < data.metrics.length; ++j) {
-            card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
-            if(i < data.metrics.length - 1) {
-              card_string += ", "
-            }
-          }
-          card_string += "</p>"
-          var index = history_queue.length - i
-          console.log(index, data)
-          console.log($($("#history-cards > div")[index - 1]))
-          if($($("#history-cards > div")[index - 1]).length > 0) {
-            $($("#history-cards > div")[index - 1]).empty()
-            $($("#history-cards > div")[index - 1]).append(card_string)
-            $($("#history-cards > div")[index - 1]).history_queue_index = i
-            $($("#history-cards > div")[index - 1]).on("click", function() {
-              var data = getData();
-              var i = $(this)["0"].history_queue_index
-              var last_history = history_queue[i]
-              if(!_.isEqual(last_history, data)) {
-                resetNavPanel(last_history)
-                condenseHistorySection()
-                history_queue.splice(i, 1);
-                history_queue.push(last_history);
-                // $(this).css("transform", "translateY(-50px)");
-                updateFirstHistory(last_history)
-              }
-            });
-          } else {
-            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
-            $("#history-card" + index)["0"].history_queue_index = i
-            $("#history-card" + index).on("click", function() {
-              var data = getData();
-              var i = $(this)["0"].history_queue_index
-              var last_history = history_queue[i]
-              if(!_.isEqual(last_history, data)) {
-                resetNavPanel(last_history)
-                condenseHistorySection()
-                history_queue.splice(i, 1);
-                history_queue.push(last_history);
-                // $(this).css("transform", "translateY(-50px)");
-                updateFirstHistory(last_history)
-              }
-            });
-          }
-        }
-      }
-
-      var appendToHistory = function(data) {
-        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-          history_queue.push(data);
-        }
-        if(history_queue.length > 4) {
-          history_queue.splice(0, 1);
-        }
-      }
-
-      var updateHistory = function(data) {
-        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
-          history_queue.push(data);
-          updateFirstHistory(data)
-        }
-        if(history_queue.length > 4) {
-          history_queue.splice(0, 1);
-        }
-      }
-
-      $("#history-card1").on("click", function() {
-        var data = getData();
-        var last_history = history_queue[history_queue.length - 1]
-        if(!_.isEqual(last_history, data)) {
-          resetNavPanel(last_history)
-          condenseHistorySection()
-        }
-      });
-
       var resetNavPanel = function(last_history) {
         // change domain back
         if(last_history) {
@@ -372,6 +264,34 @@
         }
       });
 
+      var generateOneChart = function(data, index) {
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_one_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+       }).done(function(data) {
+         // console.log(index);
+         $("#empty-screen").css({"display":"none"});
+         $("#visualizations").css({"display":"inline-block"});
+         if(_.isEqual(data.type, "chart")) {
+           $("#chart" + index + " > embed").prop("src", data.data);
+           $("#chart" + index + " > embed").css({"display": "inline-block"});
+           $("#chart" + index + " > div").css({"display": "none"});
+         } else if (_.isEqual(data.type, "raw_data")) {
+           $("#chart" + index + " > div").css({"display": "inline-block"});
+           $("#chart" + index + " > embed").css({"display": "none"});
+           // THIS IS WHERE WE WILL PUT THE TABLE
+         }
+         $("#chart" + index).css({"display":"inline-block"});
+         $("#chart" + index).prop("metric", data.metric);
+         $("#chart" + index).prop("chart_type", data.chart_type);
+       }).fail(function(xhr, status, error) {
+         console.log(error);
+       });
+      }
+
       var generateCharts = function(data) {
         $.ajax({
          type: "POST",
@@ -379,7 +299,7 @@
          url: "/generate_chart",
          data: JSON.stringify(data),
          dataType: 'json'
-        }).done(function(data)  {
+        }).done(function(data) {
           $("#empty-screen").css({"display":"none"});
           $("#visualizations").css({"display":"inline-block"});
           for(var i = 1; i < data.length + 1; ++i) {
@@ -503,70 +423,6 @@
         }
       });
 
-
-      // on show more, display history cards in expandable window
-      $("#show-more").click(function() {
-        if (!$("#history-section").hasClass("expanded")){
-          // fade in previous history cards
-          for(var i = history_queue.length - 2; i >= 0; --i) {
-            var data = history_queue[i]
-            var card_string = "<p>Domain: " + data.domain + "</p>" +
-                              "<p>Libraries: "
-            for(var j = 0; j < data.libraries.length; ++j) {
-              card_string += data.libraries[j]
-              if(i < data.libraries.length - 1) {
-                card_string += ", "
-              }
-            }
-            card_string += "</p><p>Metrics: "
-            for(var j = 0; j < data.metrics.length; ++j) {
-              card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
-              if(j < data.metrics.length - 1) {
-                card_string += ", "
-              }
-            }
-            card_string += "</p>"
-            var index = history_queue.length - i
-            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
-            $("#history-card" + index)["0"].history_queue_index = i
-            $("#history-card" + index).on("click", function() {
-              var data = getData();
-              var i = $(this)["0"].history_queue_index
-              var last_history = history_queue[i]
-              if(!_.isEqual(last_history, data)) {
-                resetNavPanel(last_history)
-                condenseHistorySection()
-                history_queue.splice(i, 1);
-                history_queue.push(last_history);
-                updateFirstHistory(last_history)
-              }
-            });
-          }
-
-          $("#history-section").animate({height: '100%',},"slow");
-          $("#history-section").addClass("expanded");
-          $("#show-more").empty()
-          $("#show-more").append("<i class=\"fas fa-chevron-down\"></i> Show Less")
-        } else {
-          condenseHistorySection()
-        }
-      });
-
-      var condenseHistorySection = function() {
-        $("#history-section").animate({height: '210px',},"slow");
-        $("#history-section").removeClass("expanded");
-        $("#show-more").empty()
-        $("#show-more").append("<i class=\"fas fa-chevron-up\"></i> Show More")
-
-        // fade out and remove previous history cards
-        var to_delete = history_queue.length - 1
-        if(to_delete > 0) {
-          $("#history-cards > div").slice(-(to_delete)).fadeOut(1000, function() {
-            $(this).remove();
-          });
-        }
-      }
-
       var showOptions = function(i) {
         $("#chart" + i).css({"display":"none"});
         $("#viz" + i + "-options").css({"display":"inline-block"});
@@ -675,7 +531,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 1)
         // console.log($("#chart1"))
       });
 
@@ -694,7 +550,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 2)
       });
 
       $("#viz3-apply").on("click", function(e) {
@@ -712,7 +568,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 3)
       });
 
       $("#viz4-apply").on("click", function(e) {
@@ -730,7 +586,7 @@
           updateHistory(data)
         }
 
-        generateCharts(data)
+        generateOneChart(data, 4)
       });
 
       $("#viz1-cancel").on("click", function(e) {
@@ -747,6 +603,155 @@
 
       $("#viz4-cancel").on("click", function(e) {
         showChart(4);
+      });
+
+      $("#history-card1").on("click", function() {
+        var data = getData();
+        var last_history = history_queue[history_queue.length - 1]
+        if(!_.isEqual(last_history, data)) {
+          resetNavPanel(last_history)
+        }
+        condenseHistorySection()
+      });
+
+      var makeHistoryString = function(data) {
+        var card_string = "<p>Domain: " + data.domain + "</p>" +
+                          "<p>Libraries: "
+        for(var j = 0; j < data.libraries.length; ++j) {
+          card_string += data.libraries[j]
+          if(j < data.libraries.length - 1) {
+            card_string += ", "
+          }
+        }
+        card_string += "</p><p>Metrics: "
+        for(var j = 0; j < data.metrics.length; ++j) {
+          card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
+          if(j < data.metrics.length - 1) {
+            card_string += ", "
+          }
+        }
+        card_string += "</p>"
+        return card_string
+      }
+
+      var condenseHistorySection = function() {
+        var is_expanded = $("#history-section").hasClass("expanded");
+        if(is_expanded) {
+          $("#history-section").animate({height: '210px',},"slow");
+          $("#history-section").removeClass("expanded");
+          $("#show-more").empty()
+          $("#show-more").append("<i class=\"fas fa-chevron-up\"></i> Show More")
+
+          // fade out and remove previous history cards
+          var to_delete = history_queue.length - 1
+          if(to_delete > 0) {
+            $("#history-cards > div").slice(-(to_delete)).fadeOut(1000, function() {
+              $(this).remove();
+            });
+          }
+        }
+      }
+
+      var updateAllHistory = function() {
+        for(var i = 0; i < history_queue.length; ++i) {
+          var data = history_queue[i]
+          var card_string = makeHistoryString(data)
+          var index = history_queue.length - i
+          // console.log(index, data)
+          // console.log($($("#history-cards > div")[index - 1]))
+          if($($("#history-cards > div")[index - 1]).length > 0) {
+            $($("#history-cards > div")[index - 1]).empty()
+            $($("#history-cards > div")[index - 1]).append(card_string)
+            $($("#history-cards > div")[index - 1]).history_queue_index = i
+            $($("#history-cards > div")[index - 1]).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                // $(this).css("transform", "translateY(-50px)");
+                updateFirstHistory(last_history)
+              }
+            });
+          } else {
+            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            $("#history-card" + index)["0"].history_queue_index = i
+            $("#history-card" + index).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                // $(this).css("transform", "translateY(-50px)");
+                updateFirstHistory(last_history)
+              }
+            });
+          }
+        }
+      }
+
+      var updateFirstHistory = function(data) {
+        var card_string = makeHistoryString(data)
+        $("#history-cards > div").first().empty()
+        $("#history-cards > div").first().append(card_string)
+      }
+
+      var appendToHistory = function(data) {
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+      }
+
+      var updateHistory = function(data) {
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          updateFirstHistory(data)
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+      }
+
+      // on show more, display history cards in expandable window
+      $("#show-more").click(function() {
+        if (!$("#history-section").hasClass("expanded")){
+          // fade in previous history cards
+          for(var i = history_queue.length - 2; i >= 0; --i) {
+            var data = history_queue[i]
+            var card_string = makeHistoryString(data)
+            var index = history_queue.length - i
+            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            $("#history-card" + index)["0"].history_queue_index = i
+            $("#history-card" + index).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                updateFirstHistory(last_history)
+              }
+            });
+          }
+
+          $("#history-section").animate({height: '100%',},"slow");
+          $("#history-section").addClass("expanded");
+          $("#show-more").empty()
+          $("#show-more").append("<i class=\"fas fa-chevron-down\"></i> Show Less")
+        } else {
+          condenseHistorySection()
+        }
       });
     </script>
   </body>
