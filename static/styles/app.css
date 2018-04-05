@@ -81,10 +81,14 @@
   margin: 10px;
   font-size: 0.5rem;
   padding: 10px;
+  -moz-transition: all .2s ease-in;
+  -o-transition: all .2s ease-in;
+  -webkit-transition: all .2s ease-in;
+  transition: all .2s ease-in;
 }
 
 .history-card:hover {
-  background-color: var(--notso-light-accent-color);
+  background-color: var(--hover-color);
 }
 
 .history-card.primary {
@@ -168,11 +172,17 @@
   width: calc(100% * (1/2) - 10px);
   height: calc(100% * (1/2) - 50px);
   margin: 5px 10px 5px 0px;
+  background-color: var(--very-light-accent-color);
+  color: var(--dark-accent-color);
+  -moz-transition: all .2s ease-in;
+  -o-transition: all .2s ease-in;
+  -webkit-transition: all .2s ease-in;
+  transition: all .2s ease-in;
 }
 
 .options-button-group .selected {
-  background-color: var(--hover-color);
-  border: 5px solid var(--dark-accent-color);
+  background-color: var(--notso-light-accent-color);
+  border: 2px solid var(--dark-accent-color);
 }
 
 .option-menu-button-group {
@@ -201,10 +211,15 @@
   max-width: 12rem;
 }
 
-.visualization embed, .visualization .option-menu {
+.visualization .chart, .visualization .option-menu {
   height: 100%;
   width: 100%;
   border: 1px solid var(--dark-color);
+}
+
+.visualization .chart embed, .visualization .chart div {
+  height: 100%;
+  width: 100%;
 }
 
 /* Override Foundation Themes */

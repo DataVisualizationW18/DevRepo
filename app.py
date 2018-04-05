@@ -27,38 +27,47 @@ def hello_world(name=None):
         "popularity" : [
             "bar_raw",
             "pie",
-            "gauge"
+            "gauge",
+            "raw_data"
         ],
         "release-frequency" : [
             "bar_avg",
-            "box"
+            "box",
+            "raw_data"
         ],
         "last-modification-date" : [
-            "bar_days"
+            "bar_days",
+            "raw_data"
         ],
         "performance" : [
             "gauge",
-            "box"
+            "box",
+            "raw_data"
         ],
         "security" : [
             "gauge",
-            "box"
+            "box",
+            "raw_data"
         ],
         "issue-response-time" : [
             "xy",
-            "box"
+            "box",
+            "raw_data"
         ],
         "issue-closing-time" : [
             "xy",
-            "box"
+            "box",
+            "raw_data"
         ],
         "backwards-compatibility" : [
             "bar",
-            "line"
+            "line",
+            "raw_data"
         ],
         "last-discussed-on-so" : [
             "box",
-            "scatter"
+            "scatter",
+            "raw_data"
         ]
     }
 
@@ -147,9 +156,11 @@ def handle_data():
         "data": chart2,
         "chart_type": "xy"
     });
-    # charts.append({
-    #     "type": "raw_data",
-    #     "data": ""
-    # });
+    charts.append({
+        "metric": "security",
+        "type": "raw_data",
+        "data": "",
+        "chart_type": "raw_data"
+    });
 
     return jsonify(charts)
