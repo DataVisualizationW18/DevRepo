@@ -15,7 +15,7 @@ virtualenv venv
 
 pip3 install Flask
 
-### Documentation For Above Steps If Encounter Issues
+### Documentation For Above Steps If Issues Encountered
 [Install Flask](http://flask.pocoo.org/docs/0.12/installation/#installation)
 
 ### Install Program Dependencies With
