@@ -2,6 +2,7 @@
     --main-bg-color: #FEFFFF;
     --hover-color: #79d1cc;
     --very-light-accent-color: #DEF2F1;
+    --notso-light-accent-color: #C6EFED;
     --light-accent-color: #3AAFA9;
     --dark-accent-color: #2B7A78;
     --dark-color: #17252A;
@@ -80,6 +81,14 @@
   margin: 10px;
   font-size: 0.5rem;
   padding: 10px;
+}
+
+.history-card:hover {
+  background-color: var(--notso-light-accent-color);
+}
+
+.history-card.primary {
+  border: 2px solid var(--dark-accent-color);
 }
 
 #empty-screen {

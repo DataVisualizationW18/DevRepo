@@ -91,7 +91,7 @@
             <button type="button" class="button" id="show-more">See More</button>
             <div id="history-cards">
               <!-- Rough history... will need to be reworked to only show one until expanded -->
-              <div class="history-card"></div>
+              <div id="history-card1" class="history-card primary"></div>
               <!-- <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
               <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
               <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div> -->
@@ -100,11 +100,11 @@
         </div>
       </div>
       <div class="cell auto">
-        <div id="empty-screen" style="display:none;">
+        <div id="empty-screen">
           <h1>WELCOME TO OUR DATA VIZ APP</h1>
           <p>Steps or something like that will go here</p>
         </div>
-        <div id="visualizations" class="flex-grid-wrapper" style="display:inline-block;">
+        <div id="visualizations" class="flex-grid-wrapper">
           <div class="flex-grid">
             <div id="viz1" class="visualization">
               <embed id="chart1" type="image/svg+xml" src="" />
@@ -208,31 +208,79 @@
         return data;
       }
 
+      var updateFirstHistory = function(data) {
+        var card_string = "<p>Domain: " + data.domain + "</p>" +
+                          "<p>Libraries: "
+        for(var i = 0; i < data.libraries.length; ++i) {
+          card_string += data.libraries[i]
+          if(i < data.libraries.length - 1) {
+            card_string += ", "
+          }
+        }
+        card_string += "</p><p>Metrics: "
+        for(var i = 0; i < data.metrics.length; ++i) {
+          card_string += data.metrics[i].metric + " (" + data.metrics[i].chart_type + ")"
+          if(i < data.metrics.length - 1) {
+            card_string += ", "
+          }
+        }
+        card_string += "</p>"
+        $("#history-cards > div").first().empty()
+        $("#history-cards > div").first().append(card_string)
+      }
+
       var updateHistory = function(data) {
         if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
           history_queue.push(data);
-          var card_string = "<p>Domain: " + data.domain + "</p>" +
-                            "<p>Libraries: "
-          for(var i = 0; i < data.libraries.length; ++i) {
-            card_string += data.libraries[i]
-            if(i < data.libraries.length - 1) {
-              card_string += ", "
-            }
-          }
-          card_string += "</p><p>Metrics: "
-          for(var i = 0; i < data.metrics.length; ++i) {
-            card_string += data.metrics[i].metric + " (" + data.metrics[i].chart_type + ")"
-            if(i < data.metrics.length - 1) {
-              card_string += ", "
-            }
-          }
-          card_string += "</p>"
-          $("#history-cards > div").first().empty()
-          $("#history-cards > div").first().append(card_string)
+          updateFirstHistory(data)
         }
         if(history_queue.length > 4) {
           history_queue.splice(0, 1);
         }
+      }
+
+      $("#history-card1").on("click", function() {
+        var data = getData();
+        var last_history = history_queue[history_queue.length - 1]
+        if(!_.isEqual(last_history, data)) {
+          resetNavPanel(last_history)
+        }
+        condenseHistorySection()
+      });
+
+      var resetNavPanel = function(last_history) {
+        // change domain back
+        if(last_history) {
+          $("#domain > label > select").val(last_history.domain).change();
+        } else {
+          $("#domain > label > select").val("").change();
+        }
+
+        // change libraries back
+        if(last_history) {
+          var libraries = []
+          $("#libraries > label > div > input").each(function(i) {
+            if(!_.isEqual($(this)["0"].id, "select_all")) {
+              libraries.push($(this)["0"].id);
+            }
+          });
+          if(!_.isEqual(libraries, last_history.libraries)) {
+            $("#libraries > label > div > input").prop("checked", false);
+          }
+          for(var i = 0; i < last_history.libraries.length; ++i) {
+            $("#" + last_history.libraries[i]).prop("checked", true);
+          }
+        } else {
+          $("#libraries").empty()
+        }
+
+        $("#metrics > select").each(function(i) {
+          if(!last_history || i >= last_history.metrics.length) {
+            $(this).val("").change()
+          } else {
+            $(this).val(last_history.metrics[i].metric).change()
+          }
+        });
       }
 
       $("#cancel-button").click(function() {
@@ -240,38 +288,7 @@
 
         var last_history = history_queue[history_queue.length - 1]
         if(!_.isEqual(last_history, data)) {
-          // change domain back
-          if(last_history) {
-            $("#domain > label > select").val(last_history.domain).change();
-          } else {
-            $("#domain > label > select").val("").change();
-          }
-
-          // change libraries back
-          if(last_history) {
-            var libraries = []
-            $("#libraries > label > div > input").each(function(i) {
-              if(!_.isEqual($(this)["0"].id, "select_all")) {
-                libraries.push($(this)["0"].id);
-              }
-            });
-            if(!_.isEqual(libraries, last_history.libraries)) {
-              $("#libraries > label > div > input").prop("checked", false);
-            }
-            for(var i = 0; i < last_history.libraries.length; ++i) {
-              $("#" + last_history.libraries[i]).prop("checked", true);
-            }
-          } else {
-            $("#libraries").empty()
-          }
-
-          $("#metrics > select").each(function(i) {
-            if(!last_history || i >= last_history.metrics.length) {
-              $(this).val("").change()
-            } else {
-              $(this).val(last_history.metrics[i].metric).change()
-            }
-          });
+          resetNavPanel(last_history)
         }
       });
 
@@ -419,7 +436,21 @@
               }
             }
             card_string += "</p>"
-            $("<div class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            var index = history_queue.length - i
+            $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
+            $("#history-card" + index)["0"].history_queue_index = i
+            $("#history-card" + index).on("click", function() {
+              var data = getData();
+              var i = $(this)["0"].history_queue_index
+              var last_history = history_queue[i]
+              if(!_.isEqual(last_history, data)) {
+                resetNavPanel(last_history)
+                condenseHistorySection()
+                history_queue.splice(i, 1);
+                history_queue.push(last_history);
+                updateFirstHistory(last_history)
+              }
+            });
           }
 
           $("#history-section").animate({height: '100%',},"slow");
@@ -427,19 +458,23 @@
           $("#show-more")["0"].textContent = "Show Less";
         }
         else {
-          $("#history-section").animate({height: '200px',},"slow");
-          $("#history-section").removeClass("expanded");
-          $("#show-more")["0"].textContent = "Show More";
-
-          // fade out and remove previous history cards
-          var to_delete = history_queue.length - 1
-          if(to_delete > 0) {
-            $("#history-cards > div").slice(-(history_queue.length - 1)).fadeOut(1000, function() {
-              $(this).remove();
-            });
-          }
+          condenseHistorySection()
         }
       });
+
+      var condenseHistorySection = function() {
+        $("#history-section").animate({height: '210px',},"slow");
+        $("#history-section").removeClass("expanded");
+        $("#show-more")["0"].textContent = "Show More";
+
+        // fade out and remove previous history cards
+        var to_delete = history_queue.length - 1
+        if(to_delete > 0) {
+          $("#history-cards > div").slice(-(to_delete)).fadeOut(1000, function() {
+            $(this).remove();
+          });
+        }
+      }
 
       var showOptions = function(i) {
         $("#chart" + i).css({"display":"none"});
@@ -452,6 +487,7 @@
         $("#viz" + i + "-options-button-group").empty();
         for(var j = 0; j < chart_types.length; ++j) {
           var add_class = ""
+          console.log(i, $("#chart" + i)["0"].chart_type)
           if(_.isEqual(chart_types[j], $("#chart" + i)["0"].chart_type)) {
             add_class = "selected"
           }
@@ -532,8 +568,11 @@
 
       $("#viz1-apply").on("click", function(e) {
         showChart(1);
-        $("#chart1")["0"].chart_type = $("#viz1-options-button-group").find(".selected")["0"].chart_type
+        $("#chart1").prop("chart_type", $("#viz1-options-button-group").find(".selected")["0"].chart_type)
 
+        console.log($("#viz1-options-button-group").find(".selected")["0"].chart_type)
+        console.log($("#chart1")["0"].chart_type)
+        console.log($("#chart1")["0"].chart_type == $("#viz1-options-button-group").find(".selected")["0"].chart_type)
         // set dictionary of current settings
         var data = getDataFromChart();
 
@@ -541,6 +580,7 @@
         updateHistory(data)
 
         generateCharts(data)
+        console.log($("#chart1"))
       });
 
       $("#viz2-apply").on("click", function(e) {
