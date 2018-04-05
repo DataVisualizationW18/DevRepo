@@ -302,9 +302,9 @@
         }).done(function(data) {
           $("#empty-screen").css({"display":"none"});
           $("#visualizations").css({"display":"inline-block"});
-          console.log(data.length);
+          // console.log(data.length);
           for(var i = 1; i < data.length + 1; ++i) {
-            console.log(data[i - 1])
+            // console.log(data[i - 1])
             if(_.isEqual(data[i - 1].type, "chart")) {
               $("#chart" + i + " > embed").prop("src", data[i - 1].data);
               $("#chart" + i + " > embed").css({"display": "inline-block"});
@@ -313,6 +313,7 @@
               $("#chart" + i + " > div").css({"display": "inline-block"});
               $("#chart" + i + " > embed").css({"display": "none"});
               // THIS IS WHERE WE WILL PUT THE TABLE
+              $("#chart" + i + " > div").append(data);
             }
             $("#viz" + i).css({"display":"inline-block"});
             $("#chart" + i).css({"display":"inline-block"});
