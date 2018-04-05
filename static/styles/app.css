@@ -152,6 +152,11 @@
   margin: 5px 10px 5px 0px;
 }
 
+.options-button-group .selected {
+  background-color: var(--hover-color);
+  border: 5px solid var(--dark-accent-color);
+}
+
 .option-menu-button-group {
   bottom: 0;
   position: absolute;

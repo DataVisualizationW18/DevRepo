@@ -67,18 +67,43 @@ def hello_world(name=None):
 
 @app.route('/generate_chart', methods=['POST'])
 def handle_data():
-    domain_list = {
-        "": [],
-        "cryptography": ["bouncycastle","commons crypto","conceal","chimera","spongycastle","keyczar","conscrypt"],
-        "databases": ["h2","derby"],
-        "json": ["gson","json.simple"],
-        "logging": ["slf4j","log4j2","logback","commons logging","tinylog","blitz4j","minlog"],
-        "mocking": ["mockito","easymock","powermock","jmock"],
-        "object-relational-mapping": ["hibernate orm","mybatis3","ormlite"],
-        "security": ["shiro","spring security"],
-        "testing": ["junit4","testng"],
-        "utilities": ["guava","commons lang"],
-        "xml": ["xerces2-j","dom4j","jdom"]
+    chart_types = {
+        "popularity" : [
+            "bar_raw",
+            "pie",
+            "gauge"
+        ],
+        "release-frequency" : [
+            "bar_avg",
+            "box"
+        ],
+        "last-modification-date" : [
+            "bar_days"
+        ],
+        "performance" : [
+            "gauge",
+            "box"
+        ],
+        "security" : [
+            "gauge",
+            "box"
+        ],
+        "issue-response-time" : [
+            "xy",
+            "box"
+        ],
+        "issue-closing-time" : [
+            "xy",
+            "box"
+        ],
+        "backwards-compatibility" : [
+            "bar",
+            "line"
+        ],
+        "last-discussed-on-so" : [
+            "box",
+            "scatter"
+        ]
     }
 
     print(request.json)
@@ -107,17 +132,20 @@ def handle_data():
     charts.append({
         "metric": "popularity",
         "type": "chart",
-        "data": chart
+        "data": chart,
+        "chart_type": "bar_raw"
     });
     charts.append({
         "metric": "performance",
         "type": "chart",
-        "data": chart
+        "data": chart,
+        "chart_type": "box"
     });
     charts.append({
         "metric": "issue-closing-time",
         "type": "chart",
-        "data": chart2
+        "data": chart2,
+        "chart_type": "xy"
     });
     # charts.append({
     #     "type": "raw_data",

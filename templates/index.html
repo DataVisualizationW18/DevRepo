@@ -283,7 +283,9 @@
             for(var i = 1; i < data.length + 1; ++i) {
               $("#chart" + i).prop("src", data[i - 1].data);
               $("#chart" + i).css({"display":"inline-block"});
-              $("#chart" + i).prop("value", data[i - 1].metric);
+              $("#chart" + i).prop("metric", data[i - 1].metric);
+              $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+              console.log($("#chart" + i));
             }
             for(var i = data.length + 1; i <= 4; ++i) {
               $("#viz" + i).css({"display":"none"});
@@ -407,10 +409,18 @@
         $("#viz1-options").css({"display":"inline-block"});
         $("#viz1-button").css({"display":"none"});
 
-        var chart_types = {{ chart_types|tojson }}[$("#chart1")["0"].value]
+        var chart_types = {{ chart_types|tojson }}[$("#chart1")["0"].metric]
         $("#viz1-options-button-group").empty();
         for(var i = 0; i < chart_types.length; ++i) {
-          $("#viz1-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+          var add_class = ""
+          if(_.isEqual(chart_types[i], $("#chart1")["0"].chart_type)) {
+            add_class = "selected"
+          }
+          $("#viz1-options-button-group").append("<a id=\"viz1-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
+          $("#viz1-" + chart_types[i])["0"].chart_type = chart_types[i];
+          $("#viz1-" + chart_types[i]).on("click", function(e) {
+            $(this).addClass('selected').siblings().removeClass('selected');
+          });
         }
       });
 
@@ -419,10 +429,18 @@
         $("#viz2-options").css({"display":"inline-block"});
         $("#viz2-button").css({"display":"none"});
 
-        var chart_types = {{ chart_types|tojson }}[$("#chart2")["0"].value]
+        var chart_types = {{ chart_types|tojson }}[$("#chart2")["0"].metric]
         $("#viz2-options-button-group").empty();
         for(var i = 0; i < chart_types.length; ++i) {
-          $("#viz2-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+          var add_class = ""
+          if(_.isEqual(chart_types[i], $("#chart2")["0"].chart_type)) {
+            add_class = "selected"
+          }
+          $("#viz2-options-button-group").append("<a id=\"viz2-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
+          $("#viz2-" + chart_types[i])["0"].chart_type = chart_types[i];
+          $("#viz2-" + chart_types[i]).on("click", function(e) {
+            $(this).addClass('selected').siblings().removeClass('selected');
+          });
         }
       });
 
@@ -431,10 +449,18 @@
         $("#viz3-options").css({"display":"inline-block"});
         $("#viz3-button").css({"display":"none"});
 
-        var chart_types = {{ chart_types|tojson }}[$("#chart3")["0"].value]
+        var chart_types = {{ chart_types|tojson }}[$("#chart3")["0"].metric]
         $("#viz3-options-button-group").empty();
         for(var i = 0; i < chart_types.length; ++i) {
-          $("#viz3-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+          var add_class = ""
+          if(_.isEqual(chart_types[i], $("#chart3")["0"].chart_type)) {
+            add_class = "selected"
+          }
+          $("#viz3-options-button-group").append("<a id=\"viz3-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
+          $("#viz3-" + chart_types[i])["0"].chart_type = chart_types[i];
+          $("#viz3-" + chart_types[i]).on("click", function(e) {
+            $(this).addClass('selected').siblings().removeClass('selected');
+          });
         }
       });
 
@@ -443,10 +469,18 @@
         $("#viz4-options").css({"display":"inline-block"});
         $("#viz4-button").css({"display":"none"});
 
-        var chart_types = {{ chart_types|tojson }}[$("#chart4")["0"].value]
+        var chart_types = {{ chart_types|tojson }}[$("#chart4")["0"].metric]
         $("#viz4-options-button-group").empty();
         for(var i = 0; i < chart_types.length; ++i) {
-          $("#viz4-options-button-group").append("<a class=\"button\">" + chart_types[i] + "</a>")
+          var add_class = ""
+          if(_.isEqual(chart_types[i], $("#chart4")["0"].chart_type)) {
+            add_class = "selected"
+          }
+          $("#viz4-options-button-group").append("<a id=\"viz4-" + chart_types[i] + "\" class=\"button " + add_class + "\">" + chart_types[i] + "</a>")
+          $("#viz4-" + chart_types[i])["0"].chart_type = chart_types[i];
+          $("#viz4-" + chart_types[i]).on("click", function(e) {
+            $(this).addClass('selected').siblings().removeClass('selected');
+          });
         }
       });
 
@@ -454,24 +488,320 @@
         $("#chart1").css({"display":"inline-block"});
         $("#viz1-options").css({"display":"none"});
         $("#viz1-button").css({"display":"inline-block"});
+
+        $("#chart1")["0"].chart_type = $("#viz1-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
+        }
+        data.metrics = []
+        if($("#chart1")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart1")["0"].metric,
+            "chart_type": $("#chart1")["0"].chart_type
+          });
+        }
+        if($("#chart2")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart2")["0"].metric,
+            "chart_type": $("#chart2")["0"].chart_type
+          });
+        }
+        if($("#chart3")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart3")["0"].metric,
+            "chart_type": $("#chart3")["0"].chart_type
+          });
+        }
+        if($("#chart4")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart4")["0"].metric,
+            "chart_type": $("#chart4")["0"].chart_type
+          });
+        }
+
+        // update history
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          $("#history-cards > div").first().text(JSON.stringify(data))
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+
+        console.log(data)
+
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          $("#empty-screen").css({"display":"none"});
+          $("#visualizations").css({"display":"inline-block"});
+          for(var i = 1; i < data.length + 1; ++i) {
+            $("#chart" + i).prop("src", data[i - 1].data);
+            $("#chart" + i).css({"display":"inline-block"});
+            $("#chart" + i).prop("metric", data[i - 1].metric);
+            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
       });
 
       $("#viz2-apply").on("click", function(e) {
         $("#chart2").css({"display":"inline-block"});
         $("#viz2-options").css({"display":"none"});
         $("#viz2-button").css({"display":"inline-block"});
+
+        $("#chart2")["0"].chart_type = $("#viz2-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
+        }
+        data.metrics = []
+        if($("#chart1")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart1")["0"].metric,
+            "chart_type": $("#chart1")["0"].chart_type
+          });
+        }
+        if($("#chart2")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart2")["0"].metric,
+            "chart_type": $("#chart2")["0"].chart_type
+          });
+        }
+        if($("#chart3")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart3")["0"].metric,
+            "chart_type": $("#chart3")["0"].chart_type
+          });
+        }
+        if($("#chart4")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart4")["0"].metric,
+            "chart_type": $("#chart4")["0"].chart_type
+          });
+        }
+
+        // update history
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          $("#history-cards > div").first().text(JSON.stringify(data))
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+
+        console.log(data)
+
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          $("#empty-screen").css({"display":"none"});
+          $("#visualizations").css({"display":"inline-block"});
+          for(var i = 1; i < data.length + 1; ++i) {
+            $("#chart" + i).prop("src", data[i - 1].data);
+            $("#chart" + i).css({"display":"inline-block"});
+            $("#chart" + i).prop("metric", data[i - 1].metric);
+            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
       });
 
       $("#viz3-apply").on("click", function(e) {
         $("#chart3").css({"display":"inline-block"});
         $("#viz3-options").css({"display":"none"});
         $("#viz3-button").css({"display":"inline-block"});
+
+        $("#chart3")["0"].chart_type = $("#viz3-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
+        }
+        data.metrics = []
+        if($("#chart1")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart1")["0"].metric,
+            "chart_type": $("#chart1")["0"].chart_type
+          });
+        }
+        if($("#chart2")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart2")["0"].metric,
+            "chart_type": $("#chart2")["0"].chart_type
+          });
+        }
+        if($("#chart3")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart3")["0"].metric,
+            "chart_type": $("#chart3")["0"].chart_type
+          });
+        }
+        if($("#chart4")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart4")["0"].metric,
+            "chart_type": $("#chart4")["0"].chart_type
+          });
+        }
+
+        // update history
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          $("#history-cards > div").first().text(JSON.stringify(data))
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+
+        console.log(data)
+
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          $("#empty-screen").css({"display":"none"});
+          $("#visualizations").css({"display":"inline-block"});
+          for(var i = 1; i < data.length + 1; ++i) {
+            $("#chart" + i).prop("src", data[i - 1].data);
+            $("#chart" + i).css({"display":"inline-block"});
+            $("#chart" + i).prop("metric", data[i - 1].metric);
+            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
       });
 
       $("#viz4-apply").on("click", function(e) {
         $("#chart4").css({"display":"inline-block"});
         $("#viz4-options").css({"display":"none"});
         $("#viz4-button").css({"display":"inline-block"});
+
+        $("#chart4")["0"].chart_type = $("#viz4-options-button-group").find(".selected")["0"].chart_type
+
+        // set dictionary of current settings
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
+
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+            data.libraries.push(selected_libraries[i].id);
+          }
+        }
+        data.metrics = []
+        if($("#chart1")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart1")["0"].metric,
+            "chart_type": $("#chart1")["0"].chart_type
+          });
+        }
+        if($("#chart2")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart2")["0"].metric,
+            "chart_type": $("#chart2")["0"].chart_type
+          });
+        }
+        if($("#chart3")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart3")["0"].metric,
+            "chart_type": $("#chart3")["0"].chart_type
+          });
+        }
+        if($("#chart4")["0"].metric) {
+          data.metrics.push({
+            "metric": $("#chart4")["0"].metric,
+            "chart_type": $("#chart4")["0"].chart_type
+          });
+        }
+
+        // update history
+        if(history_queue.length <= 4 && !_.isEqual(history_queue[history_queue.length - 1], data)) {
+          history_queue.push(data);
+          $("#history-cards > div").first().text(JSON.stringify(data))
+        }
+        if(history_queue.length > 4) {
+          history_queue.splice(0, 1);
+        }
+
+        console.log(data)
+
+        $.ajax({
+         type: "POST",
+         contentType: 'application/json',
+         url: "/generate_chart",
+         data: JSON.stringify(data),
+         dataType: 'json'
+        }).done(function(data)  {
+          $("#empty-screen").css({"display":"none"});
+          $("#visualizations").css({"display":"inline-block"});
+          for(var i = 1; i < data.length + 1; ++i) {
+            $("#chart" + i).prop("src", data[i - 1].data);
+            $("#chart" + i).css({"display":"inline-block"});
+            $("#chart" + i).prop("metric", data[i - 1].metric);
+            $("#chart" + i).prop("chart_type", data[i - 1].chart_type);
+          }
+          for(var i = data.length + 1; i <= 4; ++i) {
+            $("#viz" + i).css({"display":"none"});
+          }
+        }).fail(function(xhr, status, error) {
+          console.log(error);
+        });
       });
 
       $("#viz1-cancel").on("click", function(e) {
