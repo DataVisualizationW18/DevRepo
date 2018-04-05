@@ -148,29 +148,60 @@
 
       var history_queue = []
 
-      // $("#cancel-button").click(function() {
-      //   var data = {}
-      //   var selected_domain = $("#domain :selected")
-      //   var selected_libraries = $("#libraries :checked")
-      //   var selected_metrics = $("#metrics :selected")
-      //
-      //   data.domain = selected_domain["0"].textContent
-      //   data.libraries = []
-      //   for(var i = 0; i < selected_libraries.length; ++i) {
-      //     data.libraries.push(selected_libraries[i].id)
-      //   }
-      //   data.metrics = []
-      //   for(var i = 0; i < selected_metrics.length; ++i) {
-      //     if(selected_metrics[i].textContent != "None") {
-      //       data.metrics.push(selected_metrics[i].textContent)
-      //     }
-      //   }
-      //
-      //   if(!_.isEqual(history_queue[history_queue.length - 1], data)) {
-      //
-      //   }
-      // });
+      $("#cancel-button").click(function() {
+        var data = {}
+        var selected_domain = $("#domain :selected")
+        var selected_libraries = $("#libraries :checked")
+        var selected_metrics = $("#metrics :selected")
 
+        data.domain = selected_domain["0"].textContent
+        data.libraries = []
+        for(var i = 0; i < selected_libraries.length; ++i) {
+          data.libraries.push(selected_libraries[i].id)
+        }
+        data.metrics = []
+        for(var i = 0; i < selected_metrics.length; ++i) {
+          if(selected_metrics[i].textContent != "None") {
+            data.metrics.push(selected_metrics[i].textContent)
+          }
+        }
+
+        var last_history = history_queue[history_queue.length - 1]
+        if(!_.isEqual(last_history, data)) {
+          // change domain back
+          if(last_history) {
+            $("#domain > label > select").val(last_history.domain).change();
+          } else {
+            $("#domain > label > select").val("").change();
+          }
+
+          // change libraries back
+          if(last_history) {
+            var libraries = []
+            $("#libraries > label > div > input").each(function(i) {
+              if(!_.isEqual($(this)["0"].id, "select_all")) {
+                libraries.push($(this)["0"].id);
+              }
+            });
+            if(!_.isEqual(libraries, last_history.libraries)) {
+              $("#libraries > label > div > input").prop("checked", false);
+            }
+            for(var i = 0; i < last_history.libraries.length; ++i) {
+              $("#" + last_history.libraries[i]).prop("checked", true);
+            }
+          } else {
+            $("#libraries").empty()
+          }
+
+          $("#metrics > select").each(function(i) {
+            if(!last_history || i >= last_history.metrics.length) {
+              $(this).val("").change()
+            } else {
+              $(this).val(last_history.metrics[i].metric).change()
+            }
+          });
+        }
+      });
 
       $("#save-button").click(function() {
         if(!$(this).attr('disabled')) {
@@ -189,9 +220,9 @@
           }
           data.metrics = []
           for(var i = 0; i < selected_metrics.length; ++i) {
-            if(selected_metrics[i].textContent != "None") {
+            if(selected_metrics[i].value != "") {
               data.metrics.push({
-                "metric": selected_metrics[i].textContent,
+                "metric": selected_metrics[i].value,
                 "chart_type": "default"
               });
             }
@@ -207,7 +238,6 @@
           }
 
           // generate charts
-          // TYLER THIS IS THE PLACE
           $.ajax({
            type: "POST",
            contentType: 'application/json',
@@ -224,10 +254,6 @@
             for(var i = data.length + 1; i <= 4; ++i) {
               $("#viz" + i).css({"display":"none"});
             }
-
-            // IF DATA[index].type is raw_data DO THIS
-            // $("#viz1").empty();
-            // $("#viz1").append(data[0].data);
           }).fail(function(xhr, status, error) {
             console.log(error);
           });
@@ -273,7 +299,7 @@
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
         for(var i = 0; i < metrics.length; ++i) {
-          if(metrics[i].innerText != "None") {
+          if(metrics[i].value != "") {
             selected_metrics.push(metrics[i]);
           }
         }
@@ -289,7 +315,7 @@
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
         for(var i = 0; i < metrics.length; ++i) {
-          if(metrics[i].innerText != "None") {
+          if(metrics[i].value != "") {
             selected_metrics.push(metrics[i]);
           }
         }
@@ -305,7 +331,7 @@
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
         for(var i = 0; i < metrics.length; ++i) {
-          if(metrics[i].innerText != "None") {
+          if(metrics[i].value != "") {
             selected_metrics.push(metrics[i]);
           }
         }
