@@ -224,6 +224,7 @@ def generate_table(libraries, metric):
 
     # also trouble
     elif metric == 'backwards compatibility':
+        #for library in libraries:
         pass
     #this one is trouble
     elif metric == 'release frequency':

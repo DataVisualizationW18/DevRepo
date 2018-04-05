@@ -120,42 +120,45 @@ def handle_data():
         ]
     }
 
-    #print(request.json)
     metric_dict = request.json
-    # for metric in dict: 
-    #if metric.type = table do x
-    #else generate_chart()
+    default_dict={'popularity': 'bar_raw',
+                    'release-frequency':'bar_avg',
+                    'last-modification-date':'bar_days',
+                    'performance':'box',
+                    'security':'box',
+                    'issue-response-time':'xy',
+                    'issue-closing-time':'xy',
+                    'backwards-compatibility':'bar',
+                    'last-discussed-on-so':'box'}
 
     charts=[]
 
     for metric in metric_dict['metrics']:
        # print(metric)
 
+        lib_list=[]
+        for domain in parsed_domains:
+            if domain.name == metric_dict['domain']:
+                for library in domain.libraries:
+                    if library.name in metric_dict['libraries']:
+                        lib_list.append(library)
+
         # generate_table(libraries, metric):
         if metric['chart_type'] == 'raw_data':
-            chart = generate_table(metric_dict['libraries'], metric['metric'])
+            chart = generate_table(lib_list, metric['metric'])
             vis_type = 'raw_data'
         else:
-            # generate(libraries, metric, chart_type):
-            # print(parsed_domains, 'hello')
-            lib_list=[]
-            for domain in parsed_domains:
-                #print('\n\n'+metric_dict['domain']+'\n\n')
-                if domain.name == metric_dict['domain']:
-                    for library in domain.libraries:
-                        if library.name in metric_dict['libraries']:
-                            lib_list.append(library)
-            #for library in metric_dict['libraries']:
-            
             chart = generate(lib_list, metric['metric'], metric['chart_type'])
-            #print(metric_dict['libraries'], metric['metric'], metric['chart_type'])
-            #print(chart)
             vis_type = 'chart'
 
-        chart_dict = {'metric':metric,
+        def_chart= metric['chart_type'] 
+        if def_chart == 'default':
+            def_chart = default_dict[metric['metric']]
+
+        chart_dict = {'metric':metric['metric'],
         'type':vis_type,
         'data': chart.render_data_uri(),
-        'chart_type': metric['chart_type']
+        'chart_type': def_chart
         }
 
         charts.append(chart_dict)
