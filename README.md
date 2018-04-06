@@ -1,6 +1,8 @@
 # DataVisualizationW18
 CMPUT 302  Winter 2018 Project 3
 
+Best viewed in Chrome and Safari
+
 ## To Be Able To Run A Local Server Follow These Steps
 ### Run these commands in order
 sudo pip3 install virtualenv (If that doens't work on linux use: sudo apt-get install python3-virtualenv)
