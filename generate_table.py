@@ -1,7 +1,9 @@
+# Generates an HTML table string of the raw data for the given libraries and metrics
 def generate_table(libraries, metric):
 
     metric = metric.lower()
 
+    # If else staements for each metric. Could be reformatted to be function oriented.
     if metric == 'popularity':
         html ="""<div style="overflow-x:auto; overflow-y:auto;">
         <table class="hover"> 
@@ -13,6 +15,7 @@ def generate_table(libraries, metric):
             </thead>
             <tbody>"""
 
+        #make row for each library
         for library in libraries:
             row = """
             <tr>
@@ -37,6 +40,7 @@ def generate_table(libraries, metric):
             </thead>
             <tbody>"""
 
+        #make row for each library
         for library in libraries:
             row = """
             <tr>
@@ -61,7 +65,8 @@ def generate_table(libraries, metric):
                 </tr>
             </thead>
             <tbody>"""
-
+            
+        #make row for each library
         for library in libraries:
 
             date = library.last_discussed_on_stack_overflow[0]
@@ -256,22 +261,20 @@ def generate_table(libraries, metric):
             row = """
                     <tr>
                         <td>""" + library.name + """</td>"""
-            for b in library.backward_compatibilty:
+            for change in library.backward_compatibilty:
                 row += """
-                        <td width = 40>""" + str(b) + """</td>"""
+                        <td width = 40>""" + str(change) + """</td>"""
 
             row+="""
                 </tr>"""
 
             html+=row
-        
-        
+         
         html +="""
             </tbody>
         </table>
         </div>"""     
 
-    #this one is trouble
     elif metric == 'release-frequency':
 
         html ="""<div style="overflow-x:auto; overflow-y:auto;">
