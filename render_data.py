@@ -317,7 +317,7 @@ def generate_solid_gauge_chart_security(libraries):
 
 # issue closing time
 def generate_xy_chart_issue_closing_time(libraries):
-	xy_chart = pygal.XY(range=(0,1), title = 'Average Time To Close An Issue vs Percentage of Issues Not Closed', x_title='Average Days To Close Issue', y_title='Percentage Of Issues Closed', x_label_rotation = -45, style = invis_style)
+	xy_chart = pygal.XY(dots_size=4, range=(0,1), title = 'Average Time To Close An Issue vs Percentage of Issues Not Closed', x_title='Average Days To Close Issue', y_title='Percentage Of Issues Closed', x_label_rotation = -45, style = invis_style)
 	for library in libraries:
 		issue_count = len(library.issue_data)
 		not_responded_count = 0
@@ -351,7 +351,7 @@ def generate_box_chart_issue_closing_time(libraries):
 
 # issue response time
 def generate_xy_chart_issue_response_time(libraries):
-	xy_chart = pygal.XY(range=(0,1), title = 'Average Time To Respond To An Issue vs Percentage of Issues Not Responded To' , x_title='Average Days To Response', y_title='Percentage of Issues Not Responded To', x_label_rotation = -45, style = invis_style)
+	xy_chart = pygal.XY(dots_size=4, range=(0,1), title = 'Average Time To Respond To An Issue vs Percentage of Issues Not Responded To' , x_title='Average Days To Response', y_title='Percentage of Issues Not Responded To', x_label_rotation = -45, style = invis_style)
 	for library in libraries:
 		issue_count = len(library.issue_data)
 		not_responded_count = 0
@@ -466,7 +466,7 @@ def generate_box_chart_last_discussed(libraries):
 	return box_chart
 
 def generate_scatter_chart_last_discussed(libraries):
-	xy_chart = pygal.XY(stroke = False, title = 'Days Since Last Discussed On Stack Overflow', x_title='Days', y_title='Total Discussions', x_label_rotation = -45, style = invis_style)
+	xy_chart = pygal.XY(dots_size=4, stroke = False, title = 'Days Since Last Discussed On Stack Overflow', x_title='Days', y_title='Total Discussions', x_label_rotation = -45, style = invis_style)
 
 	now = datetime.now()
 	unsorted_list = []

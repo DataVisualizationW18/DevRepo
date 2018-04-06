@@ -46,4 +46,4 @@ We decided to not implement the FAQ section that we said we would outline within
 1. We don't have time to test what common questions and problems people might have or not have with our site and as a result we can not put together a comprehensive FAQ that would be helpful to the majority of the users.
 2. While we would like to add on into our UI, we don't know a great location for it to be placed within our UI. Also we did not have the oppurtunity to design how the FAQ section would look like or where it would fit within the current UI when opened.
 
-We decided to avoid implementing visualizations within our design because (REMOVE OR ADD TO THIS BEFORE WE FINISH)
+We decided to avoid implementing visualizations within the History Tab. We decided this course of action because when the visualizations have more than one appearing within each history button, it becomes very difficult to actually see which history you want to click as the details become very small and difficult to distinguish.
