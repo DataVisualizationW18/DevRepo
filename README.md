@@ -21,7 +21,7 @@ pip3 install Flask
 ### Install Program Dependencies With
 pip3 install xlrd
 
-sudo pip3 install pygal or sudo apt-get install pygal
+sudo pip3 install pygal (or with: sudo apt-get install pygal)
 
 ### Navigate to folder contatining project with app.py present
 
