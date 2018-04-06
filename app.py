@@ -89,7 +89,7 @@ def hello_world(name=None):
 
     return render_template('index.html',domain_list=domain_list, domain_dict=domain_dict, chart_types=chart_types)
 
-
+# Handles generating a list of charts
 @app.route('/generate_chart', methods=['POST'])
 def handle_data():
     global parsed_domains
@@ -132,7 +132,10 @@ def handle_data():
         ]
     }
 
+    # Gets the Domain, Library, and Metrics selected in the CSS form
     metric_dict = request.json
+
+    # Dictionary that maps metrics to their default chart type
     default_dict={'popularity': 'bar_raw',
                     'release-frequency':'bar_avg',
                     'last-modification-date':'bar_days',
@@ -143,10 +146,11 @@ def handle_data():
                     'backwards-compatibility':'bar',
                     'last-discussed-on-so':'box'}
 
+    # Generate a chart for each metric
     charts=[]
-
     for metric in metric_dict['metrics']:
 
+        # Get the library objects corresponding to the libraries selected in the CSS form
         lib_list=[]
         for domain in parsed_domains:
             if domain.name == metric_dict['domain']:
@@ -154,20 +158,22 @@ def handle_data():
                     if library.name in metric_dict['libraries']:
                         lib_list.append(library)
 
-        # generate_table(libraries, metric):
+        # Depending on chart type make a table or a chart
         if metric['chart_type'] == 'raw_data':
             chart = generate_table(lib_list, metric['metric'])
-            print(chart)
             vis_type = 'raw_data'
+
         else:
             chart = generate(lib_list, metric['metric'], metric['chart_type'])
             vis_type = 'chart'
             chart = chart.render_data_uri()
 
+        # Check if it is the default chart
         def_chart= metric['chart_type']
         if def_chart == 'default':
             def_chart = default_dict[metric['metric']]
 
+        # Chart dictionary with chart and chart info
         chart_dict = {'metric':metric['metric'],
         'type':vis_type,
         'data': chart,
@@ -176,9 +182,10 @@ def handle_data():
 
         charts.append(chart_dict)
 
+    # Pass the charts and chart info back to the CSS
     return jsonify(charts)
 
-
+# Handles generating a single chart, effectively the same as handle_data()
 @app.route('/generate_one_chart', methods=['POST'])
 def handle_one_data():
     global parsed_domains
@@ -243,12 +250,10 @@ def handle_one_data():
                 if library.name in metric_dict['libraries']:
                     lib_list.append(library)
 
-    # generate_table(libraries, metric):
     if metric['chart_type'] == 'raw_data':
         chart = generate_table(lib_list, metric['metric'])
         vis_type = 'raw_data'
     else:
-        print(metric['chart_type'])
         chart = generate(lib_list, metric['metric'], metric['chart_type'])
         vis_type = 'chart'
         chart = chart.render_data_uri()
