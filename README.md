@@ -17,7 +17,7 @@ If you are using Linux or iOS run the command:
 
 If that doesn't work use: 
 
-    $ sudo apt-get install python3-virtualenv)
+    $ sudo apt-get install python3-virtualenv
   
 Then Run:
   
@@ -29,7 +29,7 @@ Then Run:
   
 If you are using Windows run the command:
 
-  $ pip3 install virtualenv
+`$ pip3 install virtualenv`
 
 Then Run:
   
@@ -46,7 +46,7 @@ Then Run:
 
 In the same DevRepo directory run the following commands:
 
-If you are using Linux or iOS:
+If you are using Linux or OSX:
 
     $ pip3 install xlrd
 
@@ -61,7 +61,9 @@ If you are using Windows:
 
 ### Navigate to folder contatining project with app.py present
 
-To run use: FLASK_APP=app.py FLASK_DEBUG=1 python3 -m flask run
+To run use: 
+
+`FLASK_APP=app.py FLASK_DEBUG=1 python3 -m flask run`
 
 ### Special Notes
 Our site can handle any Metric Data as long as it follows the conventions used by the Metric Data contained in our Repository
