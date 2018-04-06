@@ -21,7 +21,7 @@ pip3 install Flask
 ### Install Program Dependencies With
 pip3 install xlrd
 
-sudo pip3 install pygal or sudo apt-get install pygal
+sudo pip3 install pygal (or with: sudo apt-get install pygal)
 
 ### Navigate to folder contatining project with app.py present
 
@@ -39,3 +39,11 @@ Row 1359 and Row 1360
 The given Library Name is a Github Repo Not the actual Library Name
 
 We modified these Library Names to fit with the convention used by the rest of Issue Data
+
+# UI Changes from our Project Description or Results from Evaluation Testing
+
+We decided to not implement the FAQ section that we said we would outline within our Discount Evaluation. We decided to ommit this UI choice for a few reasons.
+1. We don't have time to test what common questions and problems people might have or not have with our site and as a result we can not put together a comprehensive FAQ that would be helpful to the majority of the users.
+2. While we would like to add on into our UI, we don't know a great location for it to be placed within our UI. Also we did not have the oppurtunity to design how the FAQ section would look like or where it would fit within the current UI when opened.
+
+We decided to avoid implementing visualizations within our design because (REMOVE OR ADD TO THIS BEFORE WE FINISH)
