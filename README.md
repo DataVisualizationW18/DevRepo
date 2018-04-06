@@ -80,8 +80,10 @@ We modified these Library Names to fit with the convention used by the rest of I
 
 # UI Changes from our Project Description or Results from Evaluation Testing
 
-We decided to not implement the FAQ section that we mentioned outline in our Discount Evaluation. We decided to ommit this for a few reasons.
-1. We don't have time to test what common problems people might have or not have with our site and as a result we can not put together a comprehensive FAQ that would be helpful to the majority of the users. 
-2. While we would like to add on into our UI, we don't know a great location for it to be placed within our UI. Also we did not have the oppurtunity to layout and analyze a FAQ section and aren't quite sure how it would fit into our UI design in a useful but aesthetically pleasing fashion.
+We decided to not implement the FAQ section that we mentioned outline in our Discount Evaluation. We decided to omit this for a few reasons.
+1. We don't have time to test what common problems people might have or not have with our site and as a result, we cannot put together a comprehensive FAQ that would be helpful to the majority of the users. 
+2. While we would like to add on into our UI, we couldn't determine a great location for it to be placed within our UI. Also we did not have the oppurtunity to layout and analyze a FAQ section and aren't quite sure how it would fit into our UI design in a useful but aesthetically pleasing fashion.
 
-We decided to avoid implementing visualizations within the History Tab, that would act as a preveiw to what visualization types were used at that point. We decided to omit this because when the buttons have more than one visualization on them it becomes very difficult to actually see which history event you want to click, as the details become very small and difficult to distinguish.
+As a stretch goal, the FAQ section is something that we would like to explore as part of a future user evaluation.
+
+We decided to avoid implementing a screenshot of the visualizations in the History Tab that would act as a preview to what visualization types were used at that point. We decided to omit this because when the buttons have more than one visualization on them it becomes very difficult to actually see which history event you want to click, as the details become very small and difficult to distinguish. We feel that text communicates the contents of the history better.
