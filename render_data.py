@@ -35,7 +35,7 @@ def generate(libraries, metric, chart_type):
 		if chart_type == 'default' or chart_type == 'box':
 			chart = generate_box_chart_performance(libraries)
 		elif chart_type == 'gauge':
-			chart = generate_solid_gauge_chart_popularity(libraries)
+			chart = generate_solid_gauge_chart_performance(libraries)
 
 	elif metric == 'security':
 
