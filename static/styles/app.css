@@ -108,7 +108,7 @@
 #empty-screen {
   text-align: center;
   padding-top: 25%;
-  color: var(--very-light-accent-color);
+  color: var(--hover-color);
 }
 
 #visualizations {
