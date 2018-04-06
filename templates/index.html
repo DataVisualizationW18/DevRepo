@@ -584,7 +584,7 @@
           data: JSON.stringify(data),
           dataType: 'json'
         }).done(function(data) {
-         $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_type.key + "\" class=\"button " + add_class + "\">" + chart_type.readable + "<embed style=\"pointer-events: none;height:100%;width: 100%;\" type=\"image/svg+xml\" src=\"" + data.data + "\" /></a>")
+         $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_type.key + "\" class=\"button " + add_class + "\">" + chart_type.readable + "<embed style=\"pointer-events: none;height:calc(100% - 10px);width: 100%;\" type=\"image/svg+xml\" src=\"" + data.data + "\" /></a>")
          $("#viz" + i + "-" + chart_type.key).prop("chart_type", chart_type.key);
          $("#viz" + i + "-" + chart_type.key).on("click", function(e) {
            $(this).addClass('selected').siblings().removeClass('selected');

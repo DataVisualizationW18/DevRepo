@@ -13,7 +13,7 @@ ul {
 }
 
 li {
-  font-size: 0.5rem;
+  font-size: 0.6rem;
 }
 
 #full-page {
@@ -87,7 +87,7 @@ li {
   color: var(--dark-accent-color);
   height: 140px;
   margin: 10px;
-  font-size: 0.5rem;
+  font-size: 0.65rem;
   padding: 10px;
   -moz-transition: all .2s ease-in;
   -o-transition: all .2s ease-in;
