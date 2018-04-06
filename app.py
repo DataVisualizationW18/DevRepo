@@ -238,8 +238,6 @@ def handle_one_data():
         ]
     }
 
-
-    metric_dict = request.json
     default_dict={'popularity': 'bar_raw',
                     'release-frequency':'bar_avg',
                     'last-modification-date':'bar_days',
@@ -266,7 +264,10 @@ def handle_one_data():
     else:
         chart = generate(lib_list, metric['metric'], metric['chart_type'])
         vis_type = 'chart'
-        chart = chart.render_data_uri()
+        if(metric_dict['read_only']):
+            chart = chart.render_data_uri(force_uri_protocol='')
+        else:
+            chart = chart.render_data_uri()
 
     def_chart= metric['chart_type']
     if def_chart == 'default':

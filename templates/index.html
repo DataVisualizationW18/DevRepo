@@ -199,6 +199,7 @@
         var selected_libraries = $("#libraries :checked")
         var selected_metrics = $("#metrics :selected")
 
+        data.read_only = false
         data.domain = selected_domain["0"].textContent
         data.libraries = []
         for(var i = 0; i < selected_libraries.length; ++i) {
@@ -290,7 +291,8 @@
          } else if (_.isEqual(data.type, "raw_data")) {
            $("#chart" + index + " > div").css({"display": "inline-block"});
            $("#chart" + index + " > embed").css({"display": "none"});
-           // THIS IS WHERE WE WILL PUT THE TABLE
+           $("#chart" + index + " > div").empty()
+           $("#chart" + index + " > div").append(data.data);
          }
          $("#chart" + index).css({"display":"inline-block"});
          $("#chart" + index).prop("metric", data.metric);
@@ -479,8 +481,13 @@
         $("#viz" + i + "-button").css({"display":"none"});
       }
 
-      var showChartTypes = function(i) {
+      var showChartTypes = function(i, metric) {
         var chart_types = {{ chart_types|tojson }}[$("#chart" + i)["0"].metric]
+        var data = getDataFromChart()
+
+        data.read_only = true
+        delete data.metrics
+
         $("#viz" + i + "-options-button-group").empty();
         for(var j = 0; j < chart_types.length; ++j) {
           var add_class = ""
@@ -488,17 +495,46 @@
           if(_.isEqual(chart_types[j], $("#chart" + i)["0"].chart_type)) {
             add_class = "selected"
           }
-          $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_types[j] + "\" class=\"button " + add_class + "\">" + chart_types[j] + "</a>")
-          $("#viz" + i + "-" + chart_types[j])["0"].chart_type = chart_types[j];
-          $("#viz" + i + "-" + chart_types[j]).on("click", function(e) {
-            $(this).addClass('selected').siblings().removeClass('selected');
-          });
+          if(!_.isEqual(chart_types[j], "raw_data")) {
+            data.metric = {
+              "metric": metric,
+              "chart_type": chart_types[j]
+            }
+
+            console.log(data)
+
+            generateOptionsChart(i, add_class, data)
+          } else {
+            $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_types[j] + "\" class=\"button " + add_class + "\"><h3>RAW DATA</h3></a>")
+            $("#viz" + i + "-" + chart_types[j]).prop("chart_type", chart_types[j]);
+            $("#viz" + i + "-" + chart_types[j]).on("click", function(e) {
+              $(this).addClass('selected').siblings().removeClass('selected');
+            });
+          }
         }
+      }
+
+      var generateOptionsChart = function(i, add_class, data) {
+        $.ajax({
+          type: "POST",
+          contentType: 'application/json',
+          url: "/generate_one_chart",
+          data: JSON.stringify(data),
+          dataType: 'json'
+        }).done(function(data) {
+         $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + data.chart_type + "\" class=\"button " + add_class + "\">" + data.chart_type + "<embed style=\"pointer-events: none;\" type=\"image/svg+xml\" src=\"" + data.data + "\" /></a>")
+         $("#viz" + i + "-" + data.chart_type).prop("chart_type", data.chart_type);
+         $("#viz" + i + "-" + data.chart_type).on("click", function(e) {
+           $(this).addClass('selected').siblings().removeClass('selected');
+         });
+        }).fail(function(xhr, status, error) {
+         console.log(error);
+        });
       }
 
       $("#viz1-button").on("click", function(e) {
         showOptions(1);
-        showChartTypes(1);
+        showChartTypes(1, $("#chart1")["0"].metric);
       });
 
       $("#viz2-button").on("click", function(e) {
@@ -528,6 +564,7 @@
         var selected_libraries = $("#libraries :checked")
         var selected_metrics = $("#metrics :selected")
 
+        data.read_only = false
         data.domain = selected_domain["0"].textContent
         data.libraries = []
         for(var i = 0; i < selected_libraries.length; ++i) {
@@ -584,6 +621,8 @@
           "chart_type": $("#chart1").prop("chart_type")
         }
 
+        data.read_only = false
+
         generateOneChart(data, 1)
       });
 
@@ -607,6 +646,8 @@
           "metric": $("#chart2").prop("metric"),
           "chart_type": $("#chart2").prop("chart_type")
         }
+
+        data.read_only = false
 
         generateOneChart(data, 2)
       });
@@ -632,6 +673,8 @@
           "chart_type": $("#chart3").prop("chart_type")
         }
 
+        data.read_only = false
+
         generateOneChart(data, 3)
       });
 
@@ -655,6 +698,8 @@
           "metric": $("#chart4").prop("metric"),
           "chart_type": $("#chart4").prop("chart_type")
         }
+
+        data.read_only = false
 
         generateOneChart(data, 4)
       });
