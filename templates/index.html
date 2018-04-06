@@ -806,6 +806,7 @@
       var showHistoryData = function(index) {
         var data = history_queue[index]
         var card_string = makeHistoryString(data)
+        console.log($($("#history-cards > div")[index]))
         if($($("#history-cards > div")[index]).length > 0) {
           $($("#history-cards > div")[index]).empty()
           $($("#history-cards > div")[index]).append(card_string)
@@ -824,6 +825,21 @@
         var card_string = makeHistoryString(data)
         $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
         $("#history-card" + index).prop("history_queue_index", index)
+        $("#history-card" + index).on("click", function() {
+          var data = getData();
+          var i = $(this).prop("history_queue_index")
+          var last_history = history_queue[i]
+          console.log(data)
+          if(!_.isEqual(last_history, data)) {
+            resetNavPanel(last_history)
+            collapseHistorySection()
+            removeCardsFromQueue()
+            history_queue.splice(i, 1);
+            history_queue.splice(0, 0, last_history);
+            showLatestHistoryData();
+            generateCharts(last_history)
+          }
+        });
       }
 
       var addCardsFromQueue = function() {
