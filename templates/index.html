@@ -349,6 +349,7 @@
               $("#chart" + i + "-text")["0"].textContent = {{ readable_metrics|tojson }}[data[i - 1].metric];
               $("#chart" + i + " > div").css({"display": "inline-block"});
               $("#chart" + i + " > embed").css({"display": "none"});
+              $("#chart" + index + " > div").empty()
               $("#chart" + i + " > div").append(data[i - 1].data);
             }
             $("#viz" + i).css({"display":"inline-block"});
