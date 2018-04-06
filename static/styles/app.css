@@ -8,6 +8,14 @@
     --dark-color: #17252A;
 }
 
+ul {
+  font-size: 0;
+}
+
+li {
+  font-size: 0.5rem;
+}
+
 #full-page {
   height: 100vh;
   width: 100vw;

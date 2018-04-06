@@ -41,49 +41,112 @@ def hello_world(name=None):
 
     chart_types = {
         "popularity" : [
-            "bar_raw",
-            "pie",
-            "gauge",
-            "raw_data"
+            {
+                "key":"bar_raw",
+                "readable":"Bar Chart"
+            }, {
+                "key":"pie",
+                "readable":"Pie Chart"
+            }, {
+                "key":"gauge",
+                "readable":"Solid Gauge"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "release-frequency" : [
-            "bar_avg",
-            "box",
-            "raw_data"
+            {
+                "key":"bar_avg",
+                "readable":"Bar Chart"
+            }, {
+                "key":"box",
+                "readable":"Box Plot"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "last-modification-date" : [
-            "bar_days",
-            "raw_data"
+            {
+                "key":"bar_days",
+                "readable":"Bar Chart"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "performance" : [
-            "gauge",
-            "box",
-            "raw_data"
+            {
+                "key":"gauge",
+                "readable":"Solid Gauge"
+            }, {
+                "key":"box",
+                "readable":"Box Plot"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "security" : [
-            "gauge",
-            "box",
-            "raw_data"
+            {
+                "key":"gauge",
+                "readable":"Solid Gauge"
+            }, {
+                "key":"box",
+                "readable":"Box Plot"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "issue-response-time" : [
-            "xy",
-            "box",
-            "raw_data"
+            {
+                "key":"xy",
+                "readable":"Scatter Plot"
+            }, {
+                "key":"box",
+                "readable":"Box Plot"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "issue-closing-time" : [
-            "xy",
-            "box",
-            "raw_data"
+            {
+                "key":"xy",
+                "readable":"Scatter Plot"
+            }, {
+                "key":"box",
+                "readable":"Box Plot"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "backwards-compatibility" : [
-            "bar",
-            "line",
-            "raw_data"
+            {
+                "key":"bar",
+                "readable":"Bar Chart"
+            }, {
+                "key":"line",
+                "readable":"Line Graph"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ],
         "last-discussed-on-so" : [
-            "box",
-            "scatter",
-            "raw_data"
+            {
+                "key":"box",
+                "readable":"Box Plot"
+            }, {
+                "key":"scatter",
+                "readable":"Scatter Plot"
+            }, {
+                "key":"raw_data",
+                "readable":"Raw Data"
+            }
         ]
     }
 
@@ -103,44 +166,6 @@ def hello_world(name=None):
 @app.route('/generate_chart', methods=['POST'])
 def handle_data():
     global parsed_domains
-    chart_types = {
-        "popularity" : [
-            "bar_raw",
-            "pie",
-            "gauge"
-        ],
-        "release-frequency" : [
-            "bar_avg",
-            "box"
-        ],
-        "last-modification-date" : [
-            "bar_days"
-        ],
-        "performance" : [
-            "gauge",
-            "box"
-        ],
-        "security" : [
-            "gauge",
-            "box"
-        ],
-        "issue-response-time" : [
-            "xy",
-            "box"
-        ],
-        "issue-closing-time" : [
-            "xy",
-            "box"
-        ],
-        "backwards-compatibility" : [
-            "bar",
-            "line"
-        ],
-        "last-discussed-on-so" : [
-            "box",
-            "scatter"
-        ]
-    }
 
     # Gets the Domain, Library, and Metrics selected in the CSS form
     metric_dict = request.json
@@ -200,44 +225,6 @@ def handle_data():
 @app.route('/generate_one_chart', methods=['POST'])
 def handle_one_data():
     global parsed_domains
-    chart_types = {
-        "popularity" : [
-            "bar_raw",
-            "pie",
-            "gauge"
-        ],
-        "release-frequency" : [
-            "bar_avg",
-            "box"
-        ],
-        "last-modification-date" : [
-            "bar_days"
-        ],
-        "performance" : [
-            "gauge",
-            "box"
-        ],
-        "security" : [
-            "gauge",
-            "box"
-        ],
-        "issue-response-time" : [
-            "xy",
-            "box"
-        ],
-        "issue-closing-time" : [
-            "xy",
-            "box"
-        ],
-        "backwards-compatibility" : [
-            "bar",
-            "line"
-        ],
-        "last-discussed-on-so" : [
-            "box",
-            "scatter"
-        ]
-    }
 
     default_dict={'popularity': 'bar_raw',
                     'release-frequency':'bar_avg',

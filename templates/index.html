@@ -556,27 +556,27 @@
         $("#viz" + i + "-options-button-group").empty();
         for(var j = 0; j < chart_types.length; ++j) {
           var add_class = ""
-          if(_.isEqual(chart_types[j], $("#chart" + i)["0"].chart_type)) {
+          if(_.isEqual(chart_types[j].key, $("#chart" + i)["0"].chart_type)) {
             add_class = "selected"
           }
-          if(!_.isEqual(chart_types[j], "raw_data")) {
+          if(!_.isEqual(chart_types[j].key, "raw_data")) {
             data.metric = {
               "metric": metric,
-              "chart_type": chart_types[j]
+              "chart_type": chart_types[j].key
             }
 
-            generateOptionsChart(i, add_class, data)
+            generateOptionsChart(i, add_class, chart_types[j], data)
           } else {
-            $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_types[j] + "\" class=\"button " + add_class + "\"><h3>RAW DATA</h3></a>")
-            $("#viz" + i + "-" + chart_types[j]).prop("chart_type", chart_types[j]);
-            $("#viz" + i + "-" + chart_types[j]).on("click", function(e) {
+            $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_types[j].key + "\" class=\"button " + add_class + "\"><h3>RAW DATA</h3></a>")
+            $("#viz" + i + "-" + chart_types[j].key).prop("chart_type", chart_types[j].key);
+            $("#viz" + i + "-" + chart_types[j].key).on("click", function(e) {
               $(this).addClass('selected').siblings().removeClass('selected');
             });
           }
         }
       }
 
-      var generateOptionsChart = function(i, add_class, data) {
+      var generateOptionsChart = function(i, add_class, chart_type, data) {
         $.ajax({
           type: "POST",
           contentType: 'application/json',
@@ -584,9 +584,9 @@
           data: JSON.stringify(data),
           dataType: 'json'
         }).done(function(data) {
-         $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + data.chart_type + "\" class=\"button " + add_class + "\">" + data.chart_type + "<embed style=\"pointer-events: none;height:100%;width: 100%;\" type=\"image/svg+xml\" src=\"" + data.data + "\" /></a>")
-         $("#viz" + i + "-" + data.chart_type).prop("chart_type", data.chart_type);
-         $("#viz" + i + "-" + data.chart_type).on("click", function(e) {
+         $("#viz" + i + "-options-button-group").append("<a id=\"viz" + i + "-" + chart_type.key + "\" class=\"button " + add_class + "\">" + chart_type.readable + "<embed style=\"pointer-events: none;height:100%;width: 100%;\" type=\"image/svg+xml\" src=\"" + data.data + "\" /></a>")
+         $("#viz" + i + "-" + chart_type.key).prop("chart_type", chart_type.key);
+         $("#viz" + i + "-" + chart_type.key).on("click", function(e) {
            $(this).addClass('selected').siblings().removeClass('selected');
          });
         }).fail(function(xhr, status, error) {
@@ -768,22 +768,25 @@
       });
 
       var makeHistoryString = function(data) {
-        var card_string = "<p>Domain: " + data.domain + "</p>" +
-                          "<p>Libraries: "
+        var card_string = "<span><b>Domain:</b> " + data.domain + "</span><br>" +
+                          "<span><b>Libraries:</b> "
         for(var j = 0; j < data.libraries.length; ++j) {
           card_string += data.libraries[j]
           if(j < data.libraries.length - 1) {
             card_string += ", "
           }
         }
-        card_string += "</p><p>Metrics: "
+        card_string += "</span><br><span><b>Metrics:</b><ul>"
         for(var j = 0; j < data.metrics.length; ++j) {
-          card_string += data.metrics[j].metric + " (" + data.metrics[j].chart_type + ")"
-          if(j < data.metrics.length - 1) {
-            card_string += ", "
+          var chart_type = _.find({{ chart_types|tojson }}[data.metrics[j].metric], function(metric) {return _.isEqual(metric.key, data.metrics[j].chart_type)})
+          if(chart_type) {
+            chart_type = chart_type.readable
+          } else {
+            chart_type = data.metrics[j].chart_type
           }
+          card_string += "<li>" + data.metrics[j].metric + ", (type: " + chart_type + ")</li>"
         }
-        card_string += "</p>"
+        card_string += "</ul></span>"
         return card_string
       }
 
