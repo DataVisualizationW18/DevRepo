@@ -184,10 +184,11 @@ def handle_data():
             def_chart = default_dict[metric['metric']]
 
         # Chart dictionary with chart and chart info
-        chart_dict = {'metric':metric['metric'],
-        'type':vis_type,
-        'data': chart,
-        'chart_type': def_chart
+        chart_dict = {
+            'metric':metric['metric'],
+            'type':vis_type,
+            'data': chart,
+            'chart_type': def_chart
         }
 
         charts.append(chart_dict)

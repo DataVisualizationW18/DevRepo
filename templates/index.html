@@ -281,8 +281,6 @@
           }
         }
 
-        console.log(data)
-
         return data;
       }
 
@@ -347,7 +345,6 @@
          data: JSON.stringify(data),
          dataType: 'json'
        }).done(function(data) {
-         // console.log(index);
          $("#empty-screen").css({"display":"none"});
          $("#visualizations").css({"display":"inline-block"});
          if(_.isEqual(data.type, "chart")) {
@@ -378,9 +375,7 @@
         }).done(function(data) {
           $("#empty-screen").css({"display":"none"});
           $("#visualizations").css({"display":"inline-block"});
-          // console.log(data.length);
           for(var i = 1; i < data.length + 1; ++i) {
-            // console.log(data[i - 1])
             if(_.isEqual(data[i - 1].type, "chart")) {
               $("#chart" + i + " > embed").prop("src", data[i - 1].data);
               $("#chart" + i + " > embed").css({"display": "inline-block"});
@@ -429,6 +424,10 @@
 
           // generate charts
           generateCharts(data)
+          showChart(1);
+          showChart(2);
+          showChart(3);
+          showChart(4);
         }
       });
 
@@ -557,7 +556,6 @@
         $("#viz" + i + "-options-button-group").empty();
         for(var j = 0; j < chart_types.length; ++j) {
           var add_class = ""
-          // console.log(i, $("#chart" + i)["0"].chart_type)
           if(_.isEqual(chart_types[j], $("#chart" + i)["0"].chart_type)) {
             add_class = "selected"
           }
