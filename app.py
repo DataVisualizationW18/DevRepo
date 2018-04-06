@@ -87,7 +87,17 @@ def hello_world(name=None):
         ]
     }
 
-    return render_template('index.html',domain_list=domain_list, domain_dict=domain_dict, chart_types=chart_types)
+    default_dict={'popularity': 'bar_raw',
+                    'release-frequency':'bar_avg',
+                    'last-modification-date':'bar_days',
+                    'performance':'box',
+                    'security':'box',
+                    'issue-response-time':'xy',
+                    'issue-closing-time':'xy',
+                    'backwards-compatibility':'bar',
+                    'last-discussed-on-so':'box'}
+
+    return render_template('index.html',domain_list=domain_list, domain_dict=domain_dict, chart_types=chart_types, default_dict=default_dict)
 
 # Handles generating a list of charts
 @app.route('/generate_chart', methods=['POST'])

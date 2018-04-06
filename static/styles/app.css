@@ -95,6 +95,16 @@
   border: 2px solid var(--dark-accent-color);
 }
 
+.history-card.disabled,
+.history-card.disabled:hover,
+.history-card.disabled:focus,
+.history-card[disabled],
+.history-card[disabled]:hover,
+.history-card[disabled]:focus {
+  background-color: var(--very-light-accent-color);
+  color: var(--main-bg-color);
+}
+
 #empty-screen {
   text-align: center;
   padding-top: 25%;

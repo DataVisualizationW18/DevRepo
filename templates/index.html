@@ -80,8 +80,8 @@
                 </select>
               </div>
               <div id="form-button-group" class="button-group">
-                <a id="save-button" class="button" disabled>SAVE</a>
-                <a id="cancel-button" class="button">CANCEL</a>
+                <a id="save-button" class="button" disabled>APPLY</a>
+                <a id="cancel-button" class="button" disabled>CANCEL</a>
               </div>
             </form>
           </div>
@@ -89,11 +89,7 @@
             <label class="header">HISTORY</label>
             <button type="button" class="button" id="show-more"><i class="fas fa-chevron-up"></i> Show More</button>
             <div id="history-cards">
-              <!-- Rough history... will need to be reworked to only show one until expanded -->
-              <div id="history-card0" class="history-card primary"></div>
-              <!-- <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
-              <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div>
-              <div style="background-color:black; height: calc(100vh * (1/5)); margin: 10px;"></div> -->
+              <div id="history-card0" class="history-card primary disabled"></div>
             </div>
           </div>
         </div>
@@ -212,7 +208,7 @@
           if(selected_metrics[i].value != "") {
             data.metrics.push({
               "metric": selected_metrics[i].value,
-              "chart_type": "default"
+              "chart_type": {{ default_dict|tojson }}[selected_metrics[i].value]
             });
           }
         }
@@ -256,11 +252,20 @@
       }
 
       $("#cancel-button").click(function() {
-        var data = getData();
+        if(!$(this).attr('disabled')) {
+          var data = getData();
 
-        var last_history = history_queue[history_queue.length - 1]
-        if(!_.isEqual(last_history, data)) {
-          resetNavPanel(last_history)
+          var last_history = history_queue[0]
+          if(!_.isEqual(last_history, data)) {
+            resetNavPanel(last_history)
+          }
+        }
+        var data = getData()
+        var last_history = history_queue[0]
+        if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
+          $("#cancel-button").attr("disabled", true);
+        } else {
+          $("#cancel-button").attr("disabled", false);
         }
       });
 
@@ -362,6 +367,14 @@
         var valueSelected = $("option:selected")["0"].value;
         var library_list = {{ domain_dict|tojson }}[valueSelected].sort();
 
+        var data = getData()
+        var last_history = history_queue[0]
+        if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
+          $("#cancel-button").attr("disabled", true);
+        } else {
+          $("#cancel-button").attr("disabled", false);
+        }
+
         // empty #libraries and append all library checkboxes
         $("#libraries").empty()
         $("#libraries").append("<label class=\"header\">Select Libraries:</label>");
@@ -409,6 +422,14 @@
 
       // on library change disable save if needed
       $("#libraries").on('change', function(e) {
+        var data = getData()
+        var last_history = history_queue[0]
+        if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
+          $("#cancel-button").attr("disabled", true);
+        } else {
+          $("#cancel-button").attr("disabled", false);
+        }
+
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
@@ -426,6 +447,14 @@
 
       // on metric change disable save if needed
       $("#metrics").on('change', function(e) {
+        var data = getData()
+        var last_history = history_queue[0]
+        if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
+          $("#cancel-button").attr("disabled", true);
+        } else {
+          $("#cancel-button").attr("disabled", false);
+        }
+
         var selected_libraries = $("#libraries :checked");
         var metrics = $("#metrics :selected");
         var selected_metrics = [];
@@ -645,20 +674,28 @@
 
       $("#history-card0").prop("history_queue_index", 0)
       $("#history-card0").on("click", function() {
-        var data = getDataFromChart();
-        var last_history = history_queue[1]
-        if(!_.isEqual(last_history, data)) {
-          resetNavPanel(last_history)
-          console.log(last_history)
-          history_queue.splice(1, 1);
-          history_queue.splice(0, 0, last_history);
-          console.log(history_queue)
-          showLatestHistoryData();
-          generateCharts(last_history)
-        }
-        if($("#history-section").hasClass("expanded")) {
-          collapseHistorySection()
-          removeCardsFromQueue()
+        if(history_queue.length > 1) {
+          var data = getDataFromChart();
+
+          var last_history = history_queue[0]
+          if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
+            $("#cancel-button").attr("disabled", true);
+          } else {
+            $("#cancel-button").attr("disabled", false);
+          }
+
+          var last_history = history_queue[1]
+          if(!_.isEqual(last_history, data)) {
+            resetNavPanel(last_history)
+            history_queue.splice(1, 1);
+            history_queue.splice(0, 0, last_history);
+            showLatestHistoryData();
+            generateCharts(last_history)
+          }
+          if($("#history-section").hasClass("expanded")) {
+            collapseHistorySection()
+            removeCardsFromQueue()
+          }
         }
       });
 
@@ -689,7 +726,18 @@
         if(history_queue.length > 5) {
           history_queue.splice(history_queue.length - 1, 1);
         }
-        console.log(history_queue)
+        if(history_queue.length <= 1) {
+          $("#history-card0").addClass("disabled")
+        } else {
+          $("#history-card0").removeClass("disabled")
+        }
+
+        var last_history = history_queue[0]
+        if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
+          $("#cancel-button").attr("disabled", true);
+        } else {
+          $("#cancel-button").attr("disabled", false);
+        }
       }
 
       var expandHistorySection = function() {
