@@ -106,6 +106,7 @@
           <div class="flex-grid">
             <div id="viz1" class="visualization">
               <div id="chart1" class="chart">
+                <span id="chart1-text"></span>
                 <embed type="image/svg+xml" src="" />
                 <div class="raw-table"></div>
               </div>
@@ -124,6 +125,7 @@
             </div>
             <div id="viz2" class="visualization">
               <div id="chart2" class="chart">
+                <span id="chart2-text"></span>
                 <embed type="image/svg+xml" src="" />
                 <div class="raw-table"></div>
               </div>
@@ -142,6 +144,7 @@
             </div>
             <div id="viz3" class="visualization">
               <div id="chart3" class="chart">
+                <span id="chart3-text"></span>
                 <embed type="image/svg+xml" src="" />
                 <div class="raw-table"></div>
               </div>
@@ -160,6 +163,7 @@
             </div>
             <div id="viz4" class="visualization">
               <div id="chart4" class="chart">
+                <span id="chart4-text"></span>
                 <embed type="image/svg+xml" src="" />
                 <div class="raw-table"></div>
               </div>
@@ -191,48 +195,6 @@
       $(document).foundation();
 
       var history_queue = []
-
-      // var getDataFromChart = function() {
-      //   var data = {}
-      //   var selected_domain = $("#domain :selected")
-      //   var selected_libraries = $("#libraries :checked")
-      //   var selected_metrics = $("#metrics :selected")
-      //
-      //   data.read_only = false
-      //   data.domain = selected_domain["0"].textContent
-      //   data.libraries = []
-      //   for(var i = 0; i < selected_libraries.length; ++i) {
-      //     if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-      //       data.libraries.push(selected_libraries[i].id);
-      //     }
-      //   }
-      //   data.metrics = []
-      //   if($("#chart1")["0"].metric) {
-      //     data.metrics.push({
-      //       "metric": $("#chart1")["0"].metric,
-      //       "chart_type": $("#chart1")["0"].chart_type
-      //     });
-      //   }
-      //   if($("#chart2")["0"].metric) {
-      //     data.metrics.push({
-      //       "metric": $("#chart2")["0"].metric,
-      //       "chart_type": $("#chart2")["0"].chart_type
-      //     });
-      //   }
-      //   if($("#chart3")["0"].metric) {
-      //     data.metrics.push({
-      //       "metric": $("#chart3")["0"].metric,
-      //       "chart_type": $("#chart3")["0"].chart_type
-      //     });
-      //   }
-      //   if($("#chart4")["0"].metric) {
-      //     data.metrics.push({
-      //       "metric": $("#chart4")["0"].metric,
-      //       "chart_type": $("#chart4")["0"].chart_type
-      //     });
-      //   }
-      //   return data;
-      // }
 
       var getData = function () {
         var data = {}
@@ -348,10 +310,12 @@
          $("#empty-screen").css({"display":"none"});
          $("#visualizations").css({"display":"inline-block"});
          if(_.isEqual(data.type, "chart")) {
+           $("#chart" + index + "-text")["0"].textContent = {{ readable_metrics|tojson }}[data.metric];
            $("#chart" + index + " > embed").prop("src", data.data);
            $("#chart" + index + " > embed").css({"display": "inline-block"});
            $("#chart" + index + " > div").css({"display": "none"});
          } else if (_.isEqual(data.type, "raw_data")) {
+           $("#chart" + index + "-text")["0"].textContent = {{ readable_metrics|tojson }}[data.metric];
            $("#chart" + index + " > div").css({"display": "inline-block"});
            $("#chart" + index + " > embed").css({"display": "none"});
            $("#chart" + index + " > div").empty()
@@ -377,14 +341,15 @@
           $("#visualizations").css({"display":"inline-block"});
           for(var i = 1; i < data.length + 1; ++i) {
             if(_.isEqual(data[i - 1].type, "chart")) {
+              $("#chart" + i + "-text")["0"].textContent = {{ readable_metrics|tojson }}[data[i - 1].metric];
               $("#chart" + i + " > embed").prop("src", data[i - 1].data);
               $("#chart" + i + " > embed").css({"display": "inline-block"});
               $("#chart" + i + " > div").css({"display": "none"});
             } else if (_.isEqual(data[i - 1].type, "raw_data")) {
+              $("#chart" + i + "-text")["0"].textContent = {{ readable_metrics|tojson }}[data[i - 1].metric];
               $("#chart" + i + " > div").css({"display": "inline-block"});
               $("#chart" + i + " > embed").css({"display": "none"});
-              // THIS IS WHERE WE WILL PUT THE TABLE
-              $("#chart" + i + " > div").append(data);
+              $("#chart" + i + " > div").append(data[i - 1].data);
             }
             $("#viz" + i).css({"display":"inline-block"});
             $("#chart" + i).css({"display":"inline-block"});
@@ -784,7 +749,7 @@
           } else {
             chart_type = data.metrics[j].chart_type
           }
-          card_string += "<li>" + data.metrics[j].metric + ", (type: " + chart_type + ")</li>"
+          card_string += "<li>" + data.metrics[j].metric + " (type: " + chart_type + ")</li>"
         }
         card_string += "</ul></span>"
         return card_string

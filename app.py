@@ -39,6 +39,18 @@ def hello_world(name=None):
         "xml": ["xerces2-j","dom4j","jdom"]
     }
 
+    readable_metrics = {
+        "popularity": "Popularity",
+        "release-frequency": "Release Frequency",
+        "last-modification-date": "Last Modification Date",
+        "performance": "Performance",
+        "security": "Security",
+        "issue-response-time": "Issue Response Time",
+        "issue-closing-time": "Issue Closing Time",
+        "backwards-compatibility": "Backwards Compatibility",
+        "last-discussed-on-so": "Last Discussed On Stack Overflow"
+    }
+
     chart_types = {
         "popularity" : [
             {
@@ -160,7 +172,7 @@ def hello_world(name=None):
                     'backwards-compatibility':'bar',
                     'last-discussed-on-so':'box'}
 
-    return render_template('index.html',domain_list=domain_list, domain_dict=domain_dict, chart_types=chart_types, default_dict=default_dict)
+    return render_template('index.html',domain_list=domain_list, domain_dict=domain_dict, chart_types=chart_types, default_dict=default_dict, readable_metrics=readable_metrics)
 
 # Handles generating a list of charts
 @app.route('/generate_chart', methods=['POST'])
