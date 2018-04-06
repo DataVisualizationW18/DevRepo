@@ -192,47 +192,47 @@
 
       var history_queue = []
 
-      var getDataFromChart = function() {
-        var data = {}
-        var selected_domain = $("#domain :selected")
-        var selected_libraries = $("#libraries :checked")
-        var selected_metrics = $("#metrics :selected")
-
-        data.read_only = false
-        data.domain = selected_domain["0"].textContent
-        data.libraries = []
-        for(var i = 0; i < selected_libraries.length; ++i) {
-          if(!_.isEqual(selected_libraries[i].id, "select_all")) {
-            data.libraries.push(selected_libraries[i].id);
-          }
-        }
-        data.metrics = []
-        if($("#chart1")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart1")["0"].metric,
-            "chart_type": $("#chart1")["0"].chart_type
-          });
-        }
-        if($("#chart2")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart2")["0"].metric,
-            "chart_type": $("#chart2")["0"].chart_type
-          });
-        }
-        if($("#chart3")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart3")["0"].metric,
-            "chart_type": $("#chart3")["0"].chart_type
-          });
-        }
-        if($("#chart4")["0"].metric) {
-          data.metrics.push({
-            "metric": $("#chart4")["0"].metric,
-            "chart_type": $("#chart4")["0"].chart_type
-          });
-        }
-        return data;
-      }
+      // var getDataFromChart = function() {
+      //   var data = {}
+      //   var selected_domain = $("#domain :selected")
+      //   var selected_libraries = $("#libraries :checked")
+      //   var selected_metrics = $("#metrics :selected")
+      //
+      //   data.read_only = false
+      //   data.domain = selected_domain["0"].textContent
+      //   data.libraries = []
+      //   for(var i = 0; i < selected_libraries.length; ++i) {
+      //     if(!_.isEqual(selected_libraries[i].id, "select_all")) {
+      //       data.libraries.push(selected_libraries[i].id);
+      //     }
+      //   }
+      //   data.metrics = []
+      //   if($("#chart1")["0"].metric) {
+      //     data.metrics.push({
+      //       "metric": $("#chart1")["0"].metric,
+      //       "chart_type": $("#chart1")["0"].chart_type
+      //     });
+      //   }
+      //   if($("#chart2")["0"].metric) {
+      //     data.metrics.push({
+      //       "metric": $("#chart2")["0"].metric,
+      //       "chart_type": $("#chart2")["0"].chart_type
+      //     });
+      //   }
+      //   if($("#chart3")["0"].metric) {
+      //     data.metrics.push({
+      //       "metric": $("#chart3")["0"].metric,
+      //       "chart_type": $("#chart3")["0"].chart_type
+      //     });
+      //   }
+      //   if($("#chart4")["0"].metric) {
+      //     data.metrics.push({
+      //       "metric": $("#chart4")["0"].metric,
+      //       "chart_type": $("#chart4")["0"].chart_type
+      //     });
+      //   }
+      //   return data;
+      // }
 
       var getData = function () {
         var data = {}
@@ -252,33 +252,36 @@
         data.metrics = []
         for(var i = 0; i < selected_metrics.length; ++i) {
           if(selected_metrics[i].value != "") {
-            // if(_.isEqual($("#chart1")["0"].metric, selected_metrics[i].value)) {
-            //   data.metrics.push({
-            //     "metric": $("#chart1")["0"].metric,
-            //     "chart_type": $("#chart1")["0"].chart_type
-            //   });
-            // } else if(_.isEqual($("#chart2")["0"].metric, selected_metrics[i].value)) {
-            //   data.metrics.push({
-            //     "metric": $("#chart2")["0"].metric,
-            //     "chart_type": $("#chart2")["0"].chart_type
-            //   });
-            // } else if(_.isEqual($("#chart3")["0"].metric, selected_metrics[i].value)) {
-            //   data.metrics.push({
-            //     "metric": $("#chart3")["0"].metric,
-            //     "chart_type": $("#chart3")["0"].chart_type
-            //   });
-            // } else if(_.isEqual($("#chart4")["0"].metric, selected_metrics[i].value)) {
-            //   data.metrics.push({
-            //     "metric": $("#chart4")["0"].metric,
-            //     "chart_type": $("#chart4")["0"].chart_type
-            //   });
-            // }
-            data.metrics.push({
-              "metric": selected_metrics[i].value,
-              "chart_type": {{ default_dict|tojson }}[selected_metrics[i].value]
-            });
+            if(_.isEqual($("#chart1")["0"].metric, selected_metrics[i].value)) {
+              data.metrics.push({
+                "metric": $("#chart1")["0"].metric,
+                "chart_type": $("#chart1")["0"].chart_type
+              });
+            } else if(_.isEqual($("#chart2")["0"].metric, selected_metrics[i].value)) {
+              data.metrics.push({
+                "metric": $("#chart2")["0"].metric,
+                "chart_type": $("#chart2")["0"].chart_type
+              });
+            } else if(_.isEqual($("#chart3")["0"].metric, selected_metrics[i].value)) {
+              data.metrics.push({
+                "metric": $("#chart3")["0"].metric,
+                "chart_type": $("#chart3")["0"].chart_type
+              });
+            } else if(_.isEqual($("#chart4")["0"].metric, selected_metrics[i].value)) {
+              data.metrics.push({
+                "metric": $("#chart4")["0"].metric,
+                "chart_type": $("#chart4")["0"].chart_type
+              });
+            } else {
+              data.metrics.push({
+                "metric": selected_metrics[i].value,
+                "chart_type": {{ default_dict|tojson }}[selected_metrics[i].value]
+              });
+            }
           }
         }
+
+        console.log(data)
 
         return data;
       }
@@ -546,7 +549,7 @@
 
       var showChartTypes = function(i, metric) {
         var chart_types = {{ chart_types|tojson }}[$("#chart" + i)["0"].metric]
-        var data = getDataFromChart()
+        var data = getData()
 
         data.read_only = true
         delete data.metrics
@@ -576,7 +579,6 @@
       }
 
       var generateOptionsChart = function(i, add_class, data) {
-        console.log(data)
         $.ajax({
           type: "POST",
           contentType: 'application/json',
@@ -625,7 +627,7 @@
         $("#chart1").prop("chart_type", $("#viz1-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
-        var data = getDataFromChart();
+        var data = getData();
 
         // update history
         updateHistoryQueue($.extend(true, {}, data));
@@ -651,7 +653,7 @@
         $("#chart2").prop("chart_type", $("#viz2-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
-        var data = getDataFromChart();
+        var data = getData();
 
         // update history
         updateHistoryQueue($.extend(true, {}, data));
@@ -677,7 +679,7 @@
         $("#chart3").prop("chart_type", $("#viz3-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
-        var data = getDataFromChart();
+        var data = getData();
 
         // update history
         updateHistoryQueue($.extend(true, {}, data));
@@ -703,7 +705,7 @@
         $("#chart4").prop("chart_type", $("#viz4-options-button-group").find(".selected")["0"].chart_type)
 
         // set dictionary of current settings
-        var data = getDataFromChart();
+        var data = getData();
 
         // update history
         updateHistoryQueue($.extend(true, {}, data));
@@ -743,7 +745,7 @@
       $("#history-card0").prop("history_queue_index", 0)
       $("#history-card0").on("click", function() {
         if(history_queue.length > 1) {
-          var data = getDataFromChart();
+          var data = getData();
 
           var last_history = history_queue[0]
           if(_.isEqual(last_history, data) || (_.isEqual(data.domain, "Select Domain") && data.libraries.length == 0 && data.metrics.length == 0)) {
@@ -850,7 +852,7 @@
         $("<div id=\"history-card" + index + "\" class=\"history-card\">" + card_string + "</div>").appendTo("#history-cards").hide().fadeIn(200);
         $("#history-card" + index).prop("history_queue_index", index)
         $("#history-card" + index).on("click", function() {
-          var data = getDataFromChart();
+          var data = getData();
           var i = $(this).prop("history_queue_index")
           var last_history = history_queue[i]
           if(!_.isEqual(last_history, data)) {
